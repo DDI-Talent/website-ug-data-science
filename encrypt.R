@@ -10,6 +10,9 @@ staticryptR::staticryptr(
   template_button = "Access"
 )
 
+# Docs
+# https://cran.r-project.org/web/packages/staticryptR/readme/README.html
+
 #Whole game
 #1  Data visualization
 #2  Workflow: basics
