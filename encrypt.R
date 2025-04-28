@@ -12,13 +12,4 @@ staticryptR::staticryptr(
 
 # Docs
 # https://cran.r-project.org/web/packages/staticryptR/readme/README.html
-
-#Whole game
-#1  Data visualization
-#2  Workflow: basics
-#3  Data transformation
-#4  Workflow: code style
-#5  Data tidying
-#6  Workflow: scripts and projects
-#7  Data import
-#8  Workflow: getting help
+# How secure is it? https://github.com/robinmoisson/staticrypt?tab=readme-ov-file#is-it-secure
