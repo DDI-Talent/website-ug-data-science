@@ -160,3 +160,83 @@ gbd_full %>%
 ```
 
 Which produces the following output:
+
+![](images/gbd_output_3.png){fig-alt="GBD output"}
+
+In the paste() function we need to specify each element we would like to combine, separated by a comma. By default, the separation between the elements is a space, but we can change this using the sep = argument within the paste function.
+
+*Note: For more informtion on this, try looking the function up in the help tab in RStudio, either by pressing F1 when the cursor is within the function name, or by search in the Help tab search box.*
+
+### The pull() function or the extract operator
+
+We've seen how to use the `select()` function to select a specific column or columns from a dataset. The type of object we get out is the same as the type we put in, just smaller, so if we pipe a tibble (the name for a tidyverse data frame) into `select()`, we get a smaller tibble out.
+
+Sometimes however we might need our output to be in a slightly different format, we might need it to be a vector, which we can think of as a simple list of values.
+
+We can get a vector, either by using the base R extract operator `$`, or we can use the `pull()` function from the dplyr package.
+
+Let's see how both of these work:
+
+```{r}
+#| eval: false
+
+# $ operator 
+gbd_full$deaths_millions 
+ 
+# pull() function 
+gbd_full %>%
+  pull(deaths_millions)
+```
+
+R will give us all the data for that variable - as seen in the following output:
+
+![](images/gbd_output_4.png){fig-alt="GBD output"}
+
+### The round() function
+
+Not surprisingly, we can use the `round()` function from base R to round variables to create integers.
+
+For example, in the GBD dataset we might want to round the total deaths column (`deaths_millions`) to no decimal places.
+
+```{r}
+#| eval: false
+
+# round to whole number 
+round(gbd_full$deaths_millions) 
+```
+
+Which produces the following output:
+
+![](images/gbd_output_5.png){fig-alt="GBD output"}
+
+*Note: Here we use the `$` sign to specify which column from the gbd_full dataset we wanted. We did not pipe (`%>%`) gbd_full into `round()` because the first argument in this base R function is looking for a numeric vector (a list of numbers) rather than the name of a tibble or data frame, which is what we are more used to seeing in the tidyverse functions.*
+
+### Other Useful Packages
+
+#### lubridate
+
+Dates can often be a bit of a nightmare. They can come in many different formats and are prone to error and so can be awkward to work with. In the "Import Excel" video in the last topic we saw that R wasn't able to recognise the date column when we used the Import Wizard.
+
+Thankfully, like many problems in R, there is a package for just this issue and it's called the lubridate package. It's a tidyverse package which makes it easy to work with dates.
+
+Here is a quick taster, you can:
+
+-   parse (read in) a very wide range of formats with the `ymd()` function
+-   extract the relevant parts from your dates with `year()` and `month()` functions
+-   easily calculate time intervals with the `interval()` function
+
+![](images/lubridate.png){fig-alt="Lubridate cartoon"}
+
+![](images/lubridate_ymd.png){fig-alt="Lubridate cartoon"}
+
+[artwork by Allison Horst](https://twitter.com/allison_horst?lang=en)
+
+#### janitor
+
+Cleaning and tidying our data takes up a considerable amount of valuable time, but there's one function which can help to make our lives a little bit easier when we're going round the bend trying to fix badly named variables. It's the `clean_names()` function from the janitor package.
+
+The `clean_names()` function converts your variables into snake case style. This just means that it replaces all capital letters, punctuation and spaces with underscores to make the variables easier to work with because R doesn’t like your column headers to have spaces in them or weird characters and symbols.
+
+![](images/janitor_clean_names.png){fig-alt="Janitor clean names cartoon"}
+
+[artwork by Allison Horst](https://twitter.com/allison_horst?lang=en)
