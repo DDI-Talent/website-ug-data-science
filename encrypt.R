@@ -1,3 +1,5 @@
+library(staticryptR)
+
 # get the input passed from the shell script
 args <- commandArgs(trailingOnly = TRUE)
 str(args)
