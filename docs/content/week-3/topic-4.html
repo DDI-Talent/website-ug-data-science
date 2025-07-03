@@ -640,8 +640,19 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-ggplot2-package" id="toc-the-ggplot2-package" class="nav-link active" data-scroll-target="#the-ggplot2-package">The ggplot2 package</a>
+  <ul class="collapse">
+  <li><a href="#copy-copy-copy" id="toc-copy-copy-copy" class="nav-link" data-scroll-target="#copy-copy-copy"><strong>Copy, Copy, Copy</strong></a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><img src="images/ggplot2.png" class="img-fluid"></a></li>
+  </ul></li>
+  <li><a href="#the-core-elements" id="toc-the-core-elements" class="nav-link" data-scroll-target="#the-core-elements">The core elements</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -665,8 +676,73 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="the-ggplot2-package" class="level1">
+<h1>The ggplot2 package</h1>
+<p>Plotting in R is great because your code will always be there for you to check and reproduce what you did, and even better than that, you’ve already seen that you can start creating nice-looking plots straight away with just a few lines of code.</p>
+<p>It’s extremely satisfying to be able to produce multiple plots with consistent formatting by just changing one line here or there, and not having to remember what or where you clicked in a menu!</p>
+<p>The R package we use most frequently for plotting is ggplot2, and it’s part of the tidyverse which you’ll now be starting to get quite familiar with.</p>
+<p>Let’s start by looking at the main commands you need to know in ggplot2 and how to use these commands in order to display your data and format your plot the way you want.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ggplot1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><a href="https://twitter.com/allison_horst?lang=en">artwork by Allison Horst</a></p>
+<p>&nbsp;# Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join)&nbsp;</p>
+<section id="copy-copy-copy" class="level3">
+<h3 class="anchored" data-anchor-id="copy-copy-copy"><strong>Copy, Copy, Copy</strong></h3>
+<p>After opening a new script or RMarkdown file, the next thing we have to do is&nbsp;<strong>import our data.</strong></p>
+<p>Since we’re using the same data we have used before, the&nbsp;<a href="https://www.opendata.nhs.scot/dataset/cancelled-planned-operations/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884">Cancelled Planned Operations</a>&nbsp;dataset from&nbsp;<a href="https://www.opendata.nhs.scot/">Public Health Scotland</a>, we can just copy some of our previous code (look back at Week 2, topic 6). This is one of the great things about coding!</p>
+<p>You’ll spend a lot of time copying previous code you’ve written, copying code you’ve Googled on the web, or copying a colleague’s code. Don’t worry about trying to learn commands from memory. This will happen naturally for the ones you use most frequently, and for the rest, there is always Google or the&nbsp;<em>Help tab</em>!</p>
+<p><strong>Copy and paste</strong>&nbsp;the following code into your R Script or into a code chunk in your RMarkdown file.</p>
+<pre><code># Load packages 
+library(tidyverse)
+# library(lubridate)
+## library(lubridate) is only necessary if you are using Noteable, the newest version of tidyverse includes lubridate. If using Noteable, delete the # comment in the line above  
+ 
+# Read in the cancellations dataset 
+cancelled_raw &lt;- read_csv("https://www.opendata.nhs.scot/dataset/479848ef-41f8-44c5-bfb5-666e0df8f574/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884/download/cancellations_by_board_august_2024.csv")
+ 
+hb &lt;- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb19.csv")
+ 
+cancelled &lt;- cancelled_raw %&gt;%
+  # Join cancelled to hb
+  left_join(hb, by = c("HBT" = "HB")) %&gt;%
+  # Select the variables we're interested in
+  select(Month,
+         HBName,
+         TotalOperations,
+         TotalCancelled) %&gt;%
+  # Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join) 
+  filter(HBName != "NA") %&gt;%
+  # Reformat the month column to separate out year, month, day 
+  mutate(Month = ymd(Month, truncated = TRUE))</code></pre>
+<p>We don’t need to load&nbsp;ggplot2&nbsp;separately because it is loaded as part of the&nbsp;tidyverse&nbsp;set of packages.</p>
+<p>Having run that code, you should now see <strong>three objects</strong>&nbsp;in your environment tab. The two initial datasets we read in, and then our tidied dataset,&nbsp;&nbsp;cancelled.</p>
+</section>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section"><img src="images/ggplot2.png" class="img-fluid"></h3>
+<p><strong>Check the data</strong></p>
+<p>Click on&nbsp;cancelled&nbsp;to check that it has been read in ok. Remember we can do this by clicking on the object in the Environment tab and it will open in a new tab beside your script, looking just like a spreadsheet.</p>
+<p>We can also check the&nbsp;<strong>range</strong>&nbsp;of our data to see what time span is covered:&nbsp;</p>
+<pre><code>cancelled %&gt;%
+   distinct(year(Month))</code></pre>
+<p>Here we are using the&nbsp;year()&nbsp;function from&nbsp;lubridate&nbsp;to extract only the year from the part of the date in the Month variable.&nbsp;</p>
+<p>You should see the following output (screenshot shown with code run in the console):&nbsp;</p>
+<p><img src="images/ggplot3.png" class="img-fluid" width="262"><br>
+</p>
+<p>We can use a similar bit of code to look at the Health Boards:</p>
+<pre><code>cancelled %&gt;%
+   distinct(HBName)</code></pre>
+<p>From which you should see the following output (screenshot shown with code run in the console):&nbsp; <img src="images/ggplot4.png" class="img-fluid" width="259"> Notice that in both of these chunks of code, we have not assigned the value to an object. That is, we have not given them names using the assignment operator&nbsp;&nbsp;&lt;-&nbsp;&nbsp;and so they have not appeared in our environment.</p>
+<p>That’s because we’re just doing a quick check. This code is not particularly relevant to our plotting or analysis code. So we can either write and run it in a code chunk, then delete it if we don’t want to keep it there, or we can run it in the console so that it doesn’t get saved in our RMD file. Either is fine.</p>
+</section>
+</section>
+<section id="the-core-elements" class="level1">
+<h1>The core elements</h1>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
