@@ -2,3 +2,99 @@
 title: "Plotting data with ggplot2"
 format: html
 ---
+
+# The ggplot2 package
+
+Plotting in R is great because your code will always be there for you to check and reproduce what you did, and even better than that, you've already seen that you can start creating nice-looking plots straight away with just a few lines of code.
+
+It's extremely satisfying to be able to produce multiple plots with consistent formatting by just changing one line here or there, and not having to remember what or where you clicked in a menu!
+
+The R package we use most frequently for plotting is ggplot2, and it's part of the tidyverse which you'll now be starting to get quite familiar with.
+
+Let's start by looking at the main commands you need to know in ggplot2 and how to use these commands in order to display your data and format your plot the way you want.
+
+![](images/ggplot1.png){fig-align="center"}
+
+[artwork by Allison Horst](https://twitter.com/allison_horst?lang=en)
+
+ # Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join) 
+
+### **Copy, Copy, Copy**
+
+After opening a new script or RMarkdown file, the next thing we have to do is **import our data.**
+
+Since we're using the same data we have used before, the [Cancelled Planned Operations](https://www.opendata.nhs.scot/dataset/cancelled-planned-operations/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884) dataset from [Public Health Scotland](https://www.opendata.nhs.scot/), we can just copy some of our previous code (look back at Week 2, topic 6). This is one of the great things about coding!
+
+You'll spend a lot of time copying previous code you've written, copying code you've Googled on the web, or copying a colleague's code. Don't worry about trying to learn commands from memory. This will happen naturally for the ones you use most frequently, and for the rest, there is always Google or the *Help tab*!
+
+**Copy and paste** the following code into your R Script or into a code chunk in your RMarkdown file.
+
+    # Load packages 
+    library(tidyverse)
+    # library(lubridate)
+    ## library(lubridate) is only necessary if you are using Noteable, the newest version of tidyverse includes lubridate. If using Noteable, delete the # comment in the line above  
+     
+    # Read in the cancellations dataset 
+    cancelled_raw <- read_csv("https://www.opendata.nhs.scot/dataset/479848ef-41f8-44c5-bfb5-666e0df8f574/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884/download/cancellations_by_board_august_2024.csv")
+     
+    hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb19.csv")
+     
+    cancelled <- cancelled_raw %>%
+      # Join cancelled to hb
+      left_join(hb, by = c("HBT" = "HB")) %>%
+      # Select the variables we're interested in
+      select(Month,
+             HBName,
+             TotalOperations,
+             TotalCancelled) %>%
+      # Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join) 
+      filter(HBName != "NA") %>%
+      # Reformat the month column to separate out year, month, day 
+      mutate(Month = ymd(Month, truncated = TRUE))
+
+We don't need to load ggplot2 separately because it is loaded as part of the tidyverse set of packages.
+
+Having run that code, you should now see **three objects** in your environment tab. The two initial datasets we read in, and then our tidied dataset,  cancelled.
+
+### ![](images/ggplot2.png)
+
+**Check the data**
+
+Click on cancelled to check that it has been read in ok. Remember we can do this by clicking on the object in the Environment tab and it will open in a new tab beside your script, looking just like a spreadsheet.
+
+We can also check the **range** of our data to see what time span is covered: 
+
+    cancelled %>%
+       distinct(year(Month))
+
+Here we are using the year() function from lubridate to extract only the year from the part of the date in the Month variable. 
+
+You should see the following output (screenshot shown with code run in the console): 
+
+![](images/ggplot3.png){width="262"}\
+
+We can use a similar bit of code to look at the Health Boards:
+
+    cancelled %>%
+       distinct(HBName)
+
+From which you should see the following output (screenshot shown with code run in the console): 
+![](images/ggplot4.png){width="259"}
+Notice that in both of these chunks of code, we have not assigned the value to an object. That is, we have not given them names using the assignment operator  \<-  and so they have not appeared in our environment.
+
+That's because we're just doing a quick check. This code is not particularly relevant to our plotting or analysis code. So we can either write and run it in a code chunk, then delete it if we don't want to keep it there, or we can run it in the console so that it doesn't get saved in our RMD file. Either is fine.
+
+# The core elements 
+
+
+
+
+
+
+
+
+
+
+
+
+
