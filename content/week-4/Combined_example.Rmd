@@ -1,0 +1,60 @@
+---
+title: "Combined Example"
+author: "Laila Dabab Nahas"
+date: "2025-07-07"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r step1, message=FALSE}
+## Step1: Load packages
+library(tidyverse)
+library(gapminder)
+library(knitr)
+library(kableExtra)
+
+```
+
+```{r step 2}
+## Step2: Import data
+gap_raw <- gapminder
+lookup <- country_codes
+```
+
+```{r step 3}
+## Step3: join look up
+gap_joined <- gap_raw %>% 
+  left_join(lookup)
+
+```
+
+```{r step 4}
+## Step4: Explore: Table
+gap_joined %>% 
+  filter(continent== "Asia") %>% 
+  group_by(year) %>% 
+  summarise(avg_life_exp = mean(lifeExp)) %>% 
+  kable(colnames=c("Year","Average Life Expectance"),digits=3) %>% 
+  kable_classic(full_width=F)
+
+```
+
+```{r step 5, message=FALSE}
+## Step 5: EXplore: Plot
+gap_joined %>% 
+  group_by(continent,year) %>% 
+  summarise(ave_life_exp=mean(lifeExp)) %>% 
+  ggplot(aes(x=year,y=ave_life_exp,fill=continent))+
+  geom_col(postion="dodge") +
+  labs(x="Year","Average Life Expectance", title=Average Life Expectance) +
+  theme_bw()
+
+```
