@@ -29,28 +29,30 @@ You'll spend a lot of time copying previous code you've written, copying code yo
 
 **Copy and paste** the following code into your R Script or into a code chunk in your RMarkdown file.
 
-    # Load packages 
-    library(tidyverse)
-    # library(lubridate)
-    ## library(lubridate) is only necessary if you are using Noteable, the newest version of tidyverse includes lubridate. If using Noteable, delete the # comment in the line above  
-     
-    # Read in the cancellations dataset 
-    cancelled_raw <- read_csv("https://www.opendata.nhs.scot/dataset/479848ef-41f8-44c5-bfb5-666e0df8f574/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884/download/cancellations_by_board_august_2024.csv")
-     
-    hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb19.csv")
-     
-    cancelled <- cancelled_raw %>%
-      # Join cancelled to hb
-      left_join(hb, by = c("HBT" = "HB")) %>%
-      # Select the variables we're interested in
-      select(Month,
-             HBName,
-             TotalOperations,
-             TotalCancelled) %>%
-      # Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join) 
-      filter(HBName != "NA") %>%
-      # Reformat the month column to separate out year, month, day 
-      mutate(Month = ymd(Month, truncated = TRUE))
+```{r message=FALSE}
+# Load packages 
+library(tidyverse)
+# library(lubridate)
+## library(lubridate) is only necessary if you are using Noteable, the newest version of tidyverse includes lubridate. If using Noteable, delete the # comment in the line above  
+ 
+# Read in the cancellations dataset 
+cancelled_raw <- read_csv("https://www.opendata.nhs.scot/dataset/479848ef-41f8-44c5-bfb5-666e0df8f574/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884/download/cancellations_by_board_august_2024.csv")
+ 
+hb <- read_csv("https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb19.csv")
+ 
+cancelled <- cancelled_raw %>%
+  # Join cancelled to hb
+  left_join(hb, by = c("HBT" = "HB")) %>%
+  # Select the variables we're interested in
+  select(Month,
+         HBName,
+         TotalOperations,
+         TotalCancelled) %>%
+  # Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join) 
+  filter(HBName != "NA") %>%
+  # Reformat the month column to separate out year, month, day 
+  mutate(Month = ymd(Month, truncated = TRUE))
+```
 
 We don't need to load ggplot2 separately because it is loaded as part of the tidyverse set of packages.
 
@@ -64,23 +66,23 @@ Click on cancelled to check that it has been read in ok. Remember we can do th
 
 We can also check the **range** of our data to see what time span is covered: 
 
-    cancelled %>%
-       distinct(year(Month))
-
 Here we are using the year() function from lubridate to extract only the year from the part of the date in the Month variable. 
 
-You should see the following output (screenshot shown with code run in the console): 
+You should see the following output
 
-![](images/ggplot3.png){fig-align="center" width="249"}
+```{r}
+cancelled %>%
+   distinct(year(Month))
+```
 
 We can use a similar bit of code to look at the Health Boards:
 
-    cancelled %>%
-       distinct(HBName)
+From which you should see the following output
 
-From which you should see the following output (screenshot shown with code run in the console): 
-
-![](images/ggplot4.png){fig-align="center" width="246"}
+```{r}
+cancelled %>%
+   distinct(HBName)
+```
 
 Notice that in both of these chunks of code, we have not assigned the value to an object. That is, we have not given them names using the assignment operator  \<-  and so they have not appeared in our environment.
 
@@ -120,13 +122,13 @@ Some of the non-essential elements include:
 
 Let's start with the plotting function ggplot() which lets R know we are about to create a plot. And we'll specify which variables we want to display on the x and y axes. Copy and paste the following code below the last bit of code in your script: 
 
-      cancelled %>%
-        ggplot(aes(x = Month, y = TotalOperations))
-     
+```{r}
+ cancelled %>%
+   ggplot(aes(x = Month, y = TotalOperations))
 
-A blank canvas should have appeared in your *Plots* *tab* or under your code chunk if you have your output showing inline in RMarkdown (the default). This is the first layer in our plot and lets us know\... that R knows\... that we want to create a plot, but there are no data points yet.
+```
 
-![Can you work out which of the three main elements is missing?](images/elements2.png){fig-align="center"}
+A blank canvas should have appeared in your *Plots* *tab* or under your code chunk if you have your output showing inline in RMarkdown (the default). This is the first layer in our plot and lets us know... that R knows... that we want to create a plot, but there are no data points yet.
 
 -   the **data** cancelled is being piped into our ggplot() function, the starting point for all our plots
 
@@ -144,25 +146,27 @@ To add a layer in ggplot2, we have to make sure to add a  + sign at the end 
 
 Let's add a geom, and since we're looking at changes over time, let's add a geom to create a line graph, geom_line():
 
-    cancelled %>%
-        ggplot(aes(x = Month, y = TotalOperations)) +
-        geom_line()
+```{r}
+cancelled %>%
+   ggplot(aes(x = Month, y = TotalOperations)) +
+    geom_line()
+```
 
 Now we have a complete plot, with only 3 short lines of code! But, our lines don't look right. That's because for each date in our dataset, we have observations or values for 14 different Health Boards, and ggplot2 joins the points for all of these Health Board values first before moving on to the next date and so forth. To correct this, all we need to do is add a group mapping within our aes() function. This lets R know that each category within the specified group gets its own line:
 
-      cancelled %>%
-         ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
-         geom_line()
-
-![](images/paste-C04FCFB0.png)
+```{r}
+cancelled %>%
+  ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
+  geom_line()
+```
 
 Now we have a complete plot, with only 3 short lines of code! But, our lines don't look right. That's because for each date in our dataset, we have observations or values for 14 different Health Boards, and ggplot2 joins the points for all of these Health Board values first before moving on to the next date and so forth. To correct this, all we need to do is add a group mapping within our aes() function. This lets R know that each category within the specified group gets its own line:
 
-    cancelled %>%
-         ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
-         geom_line()
-
-![](images/paste-F13E645B.png)
+```{r}
+cancelled%>%
+  ggplot(aes(x = Month, y =TotalOperations, group =HBName)) +
+  geom_line()
+```
 
 There are various geoms that we can use, and we'll cover these in more detail later in the topic. For example, we have geoms for bar charts, line plots, heat maps, scatter plots, box plots, and density plots. You name it, there's probably a geom for it! There are currently at least 40 geoms from which to choose!
 
@@ -172,11 +176,11 @@ There are various geoms that we can use, and we'll cover these in more detail la
 
 The aesthetics is where all the cool stuff happens in ggplot2. This is where the values in our columns (our variables) are converted into visual scales, be that x- or y-axis scales, or colour or size scales. The aes() function allows us to access and visualise large amounts of information **quickly** and **efficiently**. 
 
-    cancelled %>%
-         ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
-         geom_line(color = "darkgreen")
-
-![](images/paste-82267677.png)
+```{r}
+cancelled %>%
+  ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
+  geom_line(color = "darkgreen")
+```
 
 What we can include or not include within the aesthetic argument however, is sometimes slightly confusing, and an argument such as colour, which we see here, has a slightly different purpose depending on where it appears in our code, so let's dive a little bit deeper into this.
 
@@ -194,13 +198,12 @@ If we wanted our data points to have a different shape or colour, *depending* 
 
 At the moment, our plot is very busy, it's hard to distinguish between the different Health Boards and it would be useful to make them more visible by assigning each a different colour, so let's add colour = HBName *within* our aesthetic mapping: 
 
-``` r
+```{r}
 cancelled %>%
-     ggplot(aes(x = Month, y = TotalOperations, colour = HBName)) +
-     geom_line()
+  ggplot(aes(x = Month, y = TotalOperations, colour = HBName)) +
+  geom_line()
 ```
 
-![](images/paste-17E35F4D.png)\
 Notice that we no longer need to specify group = HBName in our aesthetics because the colour attribute is both grouping *and* colouring each category within HBName.
 
 To summarise, when our aesthetic arguments (colour, line type, etc.) appear:
@@ -227,12 +230,12 @@ Faceting provides yet another dimension to our data and allows us to **compare*
 
 Let's take a look at the code for faceting:
 
-    cancelled %>%
-        ggplot(aes(x = Month, y = TotalOperations)) +
-        geom_line(colour = "darkgreen") +
-        facet_wrap(~HBName)
-
-![](images/paste-8B7A93F4.png)
+```{r}
+cancelled %>%
+  ggplot(aes(x = Month, y = TotalOperations)) +
+  geom_line(colour = "darkgreen") +
+  facet_wrap(~HBName)
+```
 
 The function facet_wrap() takes a formula argument, which just means that we need to remember to use the tilde sign (\~) before the variable we're interested in.
 
@@ -242,12 +245,12 @@ After faceting, we can see that it's very difficult to see the trends for the sm
 
 To change this there is an argument within facet_wrap() which makes our axes "free"! Let's add that in:
 
-     cancelled %>%
-        ggplot(aes(x = Month, y = TotalOperations)) +
-        geom_line(colour = "darkgreen") +
-        facet_wrap(~HBName, scales = "free")
-
-![](images/paste-61C44EA4.png)\
+```{r}
+cancelled %>%
+  ggplot(aes(x = Month, y = TotalOperations)) +
+  geom_line(colour = "darkgreen") +
+  facet_wrap(~HBName, scales = "free")
+```
 
 Now we can see very similar trends across all Health Boards concerning the recent drop in the total number of operations in 2020 and an increase around 2021.
 
@@ -255,13 +258,13 @@ Now we can see very similar trends across all Health Boards concerning the recen
 
 The default plot theme for ggplot2 has a grey background, but you do not have to be stuck with this, there are endless options for customising your plots, but one way you can do this quickly is by using ggplot2's **ready-to-go themes**. 
 
-     cancelled %>%
-        ggplot(aes(x = Month, y = TotalOperations)) +
-        geom_line(colour = "darkgreen") +
-        facet_wrap(~HBName, scales = "free") +
-        theme_bw() 
-
-![](images/paste-0ACA4144.png)\
+```{r}
+cancelled %>%
+  ggplot(aes(x = Month, y = TotalOperations)) +
+  geom_line(colour = "darkgreen") +
+  facet_wrap(~HBName, scales = "free") +
+  theme_bw()
+```
 
 In the code above you can see that we have added another line of code, theme_bw()which calls on ggplot2's black-and-white theme.
 
@@ -311,7 +314,7 @@ The "box" shows where the middle portion of the data is: the interquartile range
 
 If we would like to add labels or text to our plots, in addition to points and lines, or even to replace points, we can use  **geom_label()**  and **geom_text()**.
 
-#### **An intentional omission\...**
+#### **An intentional omission...**
 
 You may have noticed that one of the most common, and controversial, types of charts has not yet been discussed: the pie chart. 
 
