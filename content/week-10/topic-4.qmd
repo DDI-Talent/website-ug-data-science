@@ -2,3 +2,121 @@
 title: "GWAS Resources"
 format: html
 ---
+
+## Software
+
+A number of software packages have been developed for conducting genome-wide association studies. A few of the more common packages are:
+
+-   [PLINK](https://www.cog-genomics.org/plink/1.9/): General-purpose command line program available on Linux, Windows, and MacOS. Contains routines for opening, filtering, and converting genomic data in a number of formats. Runs linear and logistic association tests for unrelated participants. Also has a [version 2](https://www.cog-genomics.org/plink/2.0/) under development. This is the program that is taught in most GWAS courses.
+
+-   [GCTA](https://yanglab.westlake.edu.cn/software/gcta): Software package primarily for estimating heritabilty using genomic data, it can also perform GWAS while correcting for relatedness among participants. Contians a number of other features for downstream analysis, such as conditional analysis and gene-based tests. Uses a linear approximation for case-control GWAS.
+
+-   [LDAK](https://dougspeed.com/): Similar to GCTA but can fit models for different genetic architectures. 
+
+-   [BOLT-LMM](https://alkesgroup.broadinstitute.org/BOLT-LMM/BOLT-LMM_manual.html): Similar to GCTA but uses a fast approximation that speeds up computation considerably. Appropriate when analysing very large samples. Uses a linear approximation for case-control GWAS.
+
+-   [regenie](https://rgcgithub.github.io/regenie/): Fast software when GWASing multiple traits, possibly with related participants. Applicable to case-control GWAS.
+
+There are several R packages that are useful for GWAS:
+
+-   [bigsnpr](https://privefl.github.io/bigsnpr): Managing and performing quality control on SNP data
+
+-   [Bioconductor](https://bioconductor.org/): repository of bioinformatics packages
+
+-   [ieugwasr](https://github.com/MRCIEU/ieugwasr): query the OpenGWAS database
+
+Web applications:
+
+-   [FUMA](https://fuma.ctglab.nl/): functional annotation and mapping of GWAS summary statistics
+
+-   [LocusZoom](http://locuszoom.org/): interactive region plots from GWAS summary statistics
+
+Additional tools for different stages of a GWAS analysis are listed in [Table 1 of the Uffelmann primer](https://www.nature.com/articles/s43586-021-00056-9/tables/1).
+
+There is also a big list of software used for genetic analysis maintained on GitHub as the Rockefeller List: <https://gaow.github.io/genetic-analysis-software/0/>
+
+## Summary statistics
+
+### **Sources**
+
+Summary statistics are the output of SNP association effect sizes and p-values from a GWAS. Summary statistics are available in full or in part from a number of websites:
+
+-   [GWAS Catalog](https://www.ebi.ac.uk/gwas/): Comprehensive catalog of phenotype-SNP associations. Usually only contains independent significant SNPs from each study.
+
+-   [OpenGWAS](https://gwas.mrcieu.ac.uk/): Database of full summary statistics for a large number of traits, available for querying and downloading in a standardised format.
+
+-   [Psychiatric Genomics Consortium (PGC)](https://pgc.unc.edu/for-researchers/download-results/): Full summary statistics on psychiatric disorders. 
+
+-   [Social Sciences Genetic Association Consortium (SSGAC)](https://www.thessgac.org/): Full summary statistics on social and behavioural traits like education and personality.
+
+-   [Nealelab](https://www.nealelab.is/uk-biobank): Transancestry GWAS from UK Biobank.
+
+-   [GIANT Consortium](https://portals.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files): GWAS of anthropomorphic phenotypes (weight and height).
+
+-   [Global Lipids Genetics Consortium](http://lipidgenetics.org/): GWAS of lipids.
+
+### **File structure**
+
+Summary statistics are typically provided as a plain-text, tabular data file (columns are usually space or tab delimited). There is no single standard format (for example, see [daner](https://docs.google.com/document/d/1TWIhr8-qpCXB13WCXcU1_HDio8lC_MeWoAg2jlggrtU/edit), [GWAS-VCF,](https://github.com/MRCIEU/gwas-vcf-specification) and [GWAS-SSF](https://ebispot.github.io/gwas-blog/new-standard-for-gwas-summary-statistics)), but most files will look something like the following:
+
+### **File structure**
+
+Summary statistics are typically provided as a plain-text, tabular data file (columns are usually space or tab delimited). There is no single standard format (for example, see [daner](https://docs.google.com/document/d/1TWIhr8-qpCXB13WCXcU1_HDio8lC_MeWoAg2jlggrtU/edit), [GWAS-VCF,](https://github.com/MRCIEU/gwas-vcf-specification) and [GWAS-SSF](https://ebispot.github.io/gwas-blog/new-standard-for-gwas-summary-statistics)), but most files will look something like the following:
+
+|     |             |       |     |     |         |         |         |        |
+|-----|-------------|-------|-----|-----|---------|---------|---------|--------|
+| CHR | SNP         | POS   | REF | ALT | AF      | BETA    | SE      | P      |
+| 1   | rs189107123 | 10611 | C   | G   | 0.985   | -0.128  | 0.0761  | 0.0926 |
+| 1   | rs180734498 | 13302 | T   | C   | 0.118   | 0.0389  | 0.0278  | 0.162  |
+| 1   | rs144762171 | 13327 | C   | G   | 0.0339  | 0.0417  |  0.049  | 0.394  |
+| ... |             |       |     |     |         |         |         |        |
+
+-   CHR: the chromosome number of symbol. Usually specified as a number (1, 2, 3, ...) for GCRh37 or prepended with 'chr' for GCRh38 (chr1, chr2, chr3, ...)
+
+-   SNP: [Reference SNP number](https://www.ncbi.nlm.nih.gov/snp/docs/RefSNP_about/) (RSID) for the genetic marker, or some other unique name. Sometimes listed just using the chromsome and base pair position (CPID) identifier with out without the alleles (e.g., SNP rs189107123 might be called 1:10611 or 1:10611_C_G in some datasets)
+
+-   POS: basepair position in genomic coordinates of the reference genome build. This column is sometimes also labelled as BP.
+
+-   REF: reference allele. Usually, but not always, the effect allele for the association. This column is also sometimes labelled A1, allele1, or alleleB
+
+-   ALT: alternative allele. Usually, but not always, the non-effect allele. This column might also be called A2 or allele0.
+
+-   AF: frequency of the reference allele. May be multiple columns if allele frequencies in cases and controls are reported seperately.
+
+-   BETA: effect size of the association (substitution effect of each additional copy of the effect allele). For case/control and binary phenotypes, usually the odds ratio (OR) is reported instead.
+
+-   SE: standard error of the effect size. When the effect size is an odds ratio, this column usually represents the standard error of log(OR)
+
+-   P: p-value of the association
+
+Depending on the software and study design, additional columns might be present or missing.
+
+The three most important points to check when processing GWAS summary statistics are:
+
+-   what genome build the summary statistics used? RSIDs and basepair coordinates differ between genome builds, so this can influence merging and look up with other tools.
+
+-   which allele is the effect allele? There is inconsistency in whether the REF or ALT allele is the effect allele, and even how these columns are labelled. (["Let's call it the effect allele](https://academic.oup.com/ije/article/49/5/1734/5900777)")
+
+-   which strand do the alleles refer to? While the positive strand is usually assumed, some datasets might mix in alleles coded from the reverse complementary strand of DNA (e.g., the alleles for rs180734498 might be reported as REF=A, ALT=G). This causes problems when the two alleles are complementary (C and G, A and T).
+
+## Genomic databases
+
+The [National Center for Biotechnology Information (NCBI)](https://www.ncbi.nlm.nih.gov/), run by NIH, has a number of specialised, cross-referenced databases for querying genomic information:
+
+-   [dbSNP](https://www.ncbi.nlm.nih.gov/snp/): database of SNP variants with information on population frequency and genomic context.
+
+-   [Gene](https://www.ncbi.nlm.nih.gov/gene/): cross species information on genes.
+
+-   [ClinVar](https://www.ncbi.nlm.nih.gov/clinvar/): Genetic variation with clinical relevance to human health
+
+Other useful resources include
+
+-   [OMIM](https://omim.org/): Online Catalog of Human Genes and Genetic Disorders
+
+-   [genomeAD](http://www.gnomad-sg.org/): Aggregation database of exome and genome sequencing datasets. 
+
+## Suggested Read: GWAS Paper
+
+[Link](files/Let’s_call_it_the%20effect%20allele_a_suggestion_for_GWAS_naming_conventions.pdf)
+
+------------------------------------------------------------------------
