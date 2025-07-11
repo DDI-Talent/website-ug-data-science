@@ -3,9 +3,7 @@ title: "Wrangling factors and joins"
 format: html
 ---
 
-## Wrangling factors and joins
-
-### **Working with Factors**
+## **Working with Factors**
 
 Factors were mentioned very briefly in Week 2 of this course.
 
@@ -19,7 +17,7 @@ Let's just recap. Here is how we described them:
 
 These can be huge benefits, especially as a lot of medical data analyses include the comparison of different risks to a reference level. There is a handy [cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/factors.pdf) around the forcats package in R, which provides tools for working with factor (or *cat*egorical data).
 
-### **Factors Practice**
+## **Factors Practice**
 
 Remember to begin by creating a new project in RStudio.
 
@@ -37,76 +35,70 @@ Often the data you want to work with is spread between multiple tables or spread
 
  The ones we'll cover here are:
 
--    left_join() 
+-    `left_join()` 
 
--    inner_join() 
+-    `inner_join()` 
 
--    full_join() 
+-    `full_join()` 
 
 When joining two sets of data, R will look for a common column or columns on which to join. If it finds a name and data type match then it will join on this/these unless told otherwise.
 
 For demonstration purposes, the code below creates two tibbles (tidyverse data frames), *x* and *y* with a column in common,  id , which we can imagine is patient id. Let's also imagine that the two tibbles created here contain different information about a group of patients: *x* might be about outpatient appointments and *y* about treatments. You will see that we have intentionally included some patients in both tibbles but there are some only in tibble *x* and some only in tibble *y*. We now want to combine these tibbles for analysis.
 
-![](images/paste-B2E541BC.png){fig-align="center" width="290"}
+![](images/week4.1.xy.png){fig-align="center" width="312"}
 
-     ```{r}
-     # create a new tibble called x
-     x <- tibble(id = c(1, 2, 3, 4, 5),           
-              x = c("x1", "x2", "x3", "x4", "x5"))
-     x
-     # create a new tibble called y
-     y <- tibble(id = c(3, 4, 5, 6, 7),           
-              y = c("y3", "y4", "y5", "y6", "y7"))
-     y
-     ```
+```{r}
+# create a new tibble called x
+x <- tibble(id = c(1, 2, 3, 4, 5),
+            x = c("x1", "x2", "x3", "x4", "x5"))
+x
+# create a new tibble called y
+y <- tibble(id = c(3, 4, 5, 6, 7),
+            y = c("y3", "y4", "y5", "y6", "y7"))
+y
+```
 
 Which join you choose depends on which **rows** you want to keep and from which datasets. In the joins we'll be discussing below, all **columns** from both datasets are kept. 
 
 ### **I want to keep all data from both *x* and *y***
 
-![](images/paste-33538F50.png){fig-align="center" width="300"}
+![](images/full-join.gif){fig-align="center"}
 
-![](images/paste-D3C97C10.png){fig-align="center" width="204"}
+```{r}
+full_join(x, y, by = "id")
+```
 
-      ```{r}
-      full_join(x, y, by = "id")
-      ```
-
-![](images/paste-9FB4D403.png){fig-align="center" width="179"}
+![](images/week4.1.fulljoin.PNG.png){fig-align="center"}
 
 #### **I want to keep all data from *x* and only matching data from *y***
 
-![](images/paste-C609D955.png){fig-align="center" width="229"}
+![](images/left-join.gif){fig-align="center"}
 
-![](images/paste-E704FAE9.png){fig-align="center" width="201"}
+Choose  `left_join()` which keeps all data from the (primary) dataset *x* and only adds data from (another) dataset *y* if a match is found with the dataset *x*. Where no matching value is found for *x* NA is returned in the *y* column(s).
 
-Choose  left_join() which keeps all data from the (primary) dataset *x* and only adds data from (another) dataset *y* if a match is found with the dataset *x*. Where no matching value is found for *x* NA is returned in the *y* column(s).
+```{r}
+left_join(x, y, by = "id")
+```
 
-      ```{r}
-      left_join(x, y, by = "id")
-      ```
-
-![](images/paste-DCDBE797.png){fig-align="center" width="200"}
+![](images/week4.1.left_join.PNG.png){fig-align="center"}
 
 If there is more than one match between *x* and *y* (perhaps *x* is a list of patients and *y* is a list of medications each patients is on), all combinations of the matches are returned.
 
 ##### **I only want to keep data that is matched on both *x* and *y***
 
-![](images/paste-C672202E.png){fig-align="center" width="201"}
+![](images/inner-join.gif){fig-align="center"}
 
-![](images/paste-8B394874.png){fig-align="center" width="166"}
+Choose   `inner_join()` which keeps only rows of data where a match is found between *x* and *y*.
 
-Choose   inner_join() which keeps only rows of data where a match is found between *x* and *y*.
+```{r}
+inner_join(x, y, by = "id")
+```
 
-      ```{r}
-      inner_join(x, y, by = "id")
-      ```
-
-![](images/paste-BB7DE1E4.png){fig-align="center" width="221"}
+![](images/week4.1.innerjoin.PNG.png){fig-align="center"}
 
 You can also think of joins using Venn diagrams:
 
-![](images/paste-9872025C.png){fig-align="center" width="365"}
+![](images/week4.1.Venn_diagrams.png){fig-align="center" width="497"}
 
 To find out more information on the full set of joins you can use, take a look in the Help tab under "join" (or type  ?join into the console). The [data wrangling with dplyr and tidyr cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) can also be quite helpful. 
 
@@ -116,9 +108,9 @@ Once you have wrangled your data and/or produced a table or object, you may wish
 
 To save a csv file, which can then be opened in Excel or other such software, you can use the write_csv() function, which was discussed in one of the Week 6 Topic 3 practice documents. This function works as follows: 
 
-      ```{r}
-      write_csv(dataobject, "filename.csv")
-      ```
+```{r}
+write_csv(dataobject, "filename.csv")
+```
 
 Alternatively, if you are saving data for your own purposes or to share with a colleague with also uses R, you can create an rda or RData file. rda files are a short form of RData files. The advantages of using RData files include 
 
@@ -130,17 +122,17 @@ Alternatively, if you are saving data for your own purposes or to share with a c
 
 The functions to save and load RData files are conveniently save() and load(), which work as follows:
 
-      ```{r}
-      #to save one object 
-      save(dataobject, "filename.rda")
-     
-      #to save more than obe object 
-      save(dataobject1, dataobject2, "filename.rda")
-     
-      #to read in your RData file
-      load("filename.rda")
-      ```
+```{r}
+#to save one object
+save(dataobject, "filename.rda")
+ 
+#to save more than obe object
+save(dataobject1, dataobject2, "filename.rda")
+ 
+#to read in your RData file
+load("filename.rda")
+```
 
-![](images/paste-28013465.png){fig-align="center" width="529"}
+![](images/week4.1.rdata_example.png){fig-align="center"}
 
 ------------------------------------------------------------------------
