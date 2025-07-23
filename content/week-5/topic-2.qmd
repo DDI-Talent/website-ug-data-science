@@ -2,9 +2,14 @@
 title: "Creating more exciting tables"
 format: html
 ---
+
 ```{r}
 #| include: false
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  eval = TRUE)
 ```
 
 ## The gt Package
@@ -59,7 +64,7 @@ Let's start out with some data wrangling to get the data ready for presentation 
  
  stroke_mortality <- stroke_mortality_raw %>%
  # Join cancelled to hb
-   left_join(hb, by = c("HBR" = "HB")) %>%
+   left_join(hb, join_by(Hbr == HB)) %>%
  # select the variables we are interested in 
    select(Year, HBName, AgeGroup, Sex, Diagnosis, NumberOfDeaths, CrudeRate, EASR) %>% 
  # filter out aggregate levels of the variables 
@@ -73,14 +78,15 @@ For sake of simplicity, let's say that we are specifically interested in the yea
 To create a `gt` table object, all you need to do is pass your dataset, plus any data wrangling, to the `gt()` function. Because the `gt` package follows tidyverse conventions, our good friend the pipe (%\>%) will continue to be useful to us here to use the gt functions to modify the `gt` table object!
 
 ```{r}
+#| results: 'asis'
+#| echo: true
+
 stroke_mortality %>%
    filter(Year == 2020,
           AgeGroup == "75plus years",
           HBName %in% c("NHS Borders", "NHS Fife")) %>% 
    gt()
 ```
-
-![](images/gt%20Table%201.png){.center fig-align="center" width="563"}
 
 Because we have filtered the data to only be for one `Year` and one `AgeGroup`, it is not necessarily relevant to include them in the table as we can highlight what data is presented in the table title (covered later in this tutorial). In this case, you can first select only the variables you are interested in showing in the table before creating the gt object.
 
@@ -97,8 +103,6 @@ stroke_mortality %>%
           EASR) %>% 
    gt()
 ```
-
-![](images/gt%20Table%202.png){.center fig-align="center" width="563"}
 
 ## Modify columns with the cols\_\*() functions
 
@@ -124,8 +128,6 @@ stroke_mortality %>%
               EASR = "European Age-Sex Standardised Rate") 
 ```
 
-![](images/gt%20Table%203.png){.center fig-align="center" width="563"}
-
 `cols_align()` aligns all text within a column. You can specify which columns to align using `vars()` - notice that the arguments are the original variable names. Commonly, the convention is to left-align text with varying length and right-align numbers. You can align different columns different ways by adding multiple `cols_align()` layers.
 
 ```{r}
@@ -147,8 +149,6 @@ stroke_mortality %>%
    cols_align(align = "center",
               columns = NumberOfDeaths)
 ```
-
-![](images/gt%20Table%204.png){.center fig-align="center" width="563"}
 
 `cols_move_*()` set of functions allows you to move columns to the start or end (or wherever you want!) in your table. To move a column to the start we use `cols_move_to_start()` and to move a column to the end, the function is `cols_move_to_end()`.
 
@@ -175,12 +175,166 @@ stroke_mortality %>%
  cols_align(align = "center", columns = NumberOfDeaths)
 ```
 
-![](images/gt%20Table%205.png){.center fig-align="center" width="563"}
-
 ## Format columns with the fmt\_\*() functions
+
+To format values within columns, you can use the range of `fmt_*()` functions.
+
+`fmt_number()` formats numeric (number-based) columns. For example, using the argument `decimal = 2` you can set a decimal place or add a suffix such as K for thousands to large numbers using `suffixing = TRUE`.
+
+```{r}
+stroke_mortality %>%
+   filter(Year == 2020,
+          AgeGroup == "75plus years",
+          HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+   select(HBName, Sex, Diagnosis, NumberOfDeaths, CrudeRate, EASR) %>% 
+   gt() %>%
+   fmt_number(columns = c(CrudeRate, EASR), decimals = 3)
+```
+
+`fmt_percent(`) formats numbers into percents and includes the % symbol for us. By default, the values are multiplied by 100 before adding the % symbol. So, if your data is already multiplied by 100, use the `scale_value = FALSE` argument to tell R that the input is not a proportion.
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+          AgeGroup == "75plus years",
+          HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(HBName,
+         Sex, 
+         Diagnosis,
+         NumberOfDeaths, 
+         CrudeRate, 
+         EASR) %>%
+  gt() %>%
+  fmt_percent(columns = c(CrudeRate, EASR), decimals = 0, scale_value = FALSE)
+```
+
+`sub_missing()` formats the default NA missing values in R to be a dash instead. As the subset of data we have been using does not have any NAs, we need to first change the data filtering a bit of our code to include NA values.
+
+```{r}
+stroke_mortality %>% 
+  filter(Year == 2012,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Orkney", "NHS Grampian")) %>% 
+  select(-Year, -AgeGroup) %>%
+  gt() %>%
+  sub_missing(columns = c(NumberOfDeaths, CrudeRate))
+```
 
 ## ...and now to the stub (or rows)!
 
+The stub is typically a column of row labels that does not have or need a column label.
+
+### **Add a grouping using the `rowname_col` argument**
+
+There are two ways in which you can add a grouping variable to your table, which differ in aesthetics
+
+1.  by passing grouped data to the `gt()` function
+
+```{r}
+ stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(-Year, - AgeGroup) %>%
+  group_by(Sex) %>%
+  gt()
+```
+
+2.  specify `rowname_col` within `gt()`
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(-Year, - AgeGroup) %>%
+  gt(rowname_col = "Sex")
+```
+
+To add a column name to the stub, if desired, you can use `tab_stubhead()`.
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  #select(-Year, - AgeGroup) %>%
+  group_by(Sex) %>% 
+  gt() %>% 
+  summary_rows(columns = NumberOfDeaths, 
+               fns = list("Average" = ~mean(., na.rm = TRUE)))
+```
+
+You can also add grand summaries to grouped data using `grand_summary_rows()`.
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(-Year, - AgeGroup) %>%   
+  group_by(Sex) %>% 
+  gt() %>% 
+  summary_rows(columns = c(NumberOfDeaths, CrudeRate, EASR), 
+               fns = list(Average = ~mean(., na.rm = TRUE))) %>% 
+  grand_summary_rows(columns = c(NumberOfDeaths, CrudeRate, EASR), 
+                     fns = list("Overall Average" = ~mean(., na.rm = TRUE)))
+```
+
+You may have noticed that the decimal places are all of the place in the above table. It is good practice to have a consistent reporting of numbers to the same decimal place. We can sort out the columns with `fmt_number()` which have have seen previously and the summary rows with the argument fmt.
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(-Year, - AgeGroup) %>%   
+  group_by(Sex) %>% 
+  gt() %>% 
+  # format numbers in columns 
+  fmt_number(columns = c(CrudeRate, EASR), decimals = 3) %>% 
+  summary_rows(columns = c(NumberOfDeaths, CrudeRate, EASR), 
+               fns = list(Average = ~mean(., na.rm = TRUE)),
+               # format number in grouped summary rows 
+               fmt = list(~ fmt_number(., decimals = 3))) %>% 
+  grand_summary_rows(columns = c(NumberOfDeaths, CrudeRate, EASR), 
+                     fns = list("Overall Average" = ~mean(., na.rm = TRUE)),
+                     # and format number in grand summary row 
+                     fmt = list(~ fmt_number(., decimals = 3)))
+```
+
 ## Add the final touches
 
-## Bonus - Introduction video from gt package developers
+Once you have your table formatted as you would like, it is important to add the final touches to make it formative for your target audience, including a header (title) and any notes.
+
+Add a title and/or subtitle using `tab_header()`.
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(-Year, - AgeGroup) %>%   
+  gt() %>% 
+  tab_header(title = "Stroke Mortality in 2020 in Adults Aged 75+",
+             subtitle = "Data from NHS Borders and NHS Fife")
+```
+
+You can also add spanner column labels if you have multiple similar variables and would like to draw attention to the grouping using `tab_spanner()`. You can use multiple `tab_spanner()` layers to add multiple spanners highlighting different groups of columns.
+
+```{r}
+stroke_mortality %>%
+  filter(Year == 2020,
+         AgeGroup == "75plus years",
+         HBName %in% c("NHS Borders", "NHS Fife")) %>% 
+  select(-Year, - AgeGroup) %>%  
+  gt() %>%
+  tab_header(title = "Stroke Mortality in 2020 in Adults Aged 75+",
+             subtitle = "Data from NHS Borders and NHS Fife") %>% 
+  tab_spanner(label = "Rate per 100k population",
+              columns = c(CrudeRate, EASR))
+```
+
+## Bonus - Introduction video from `gt` package developers
+
+[Rich Iannone](https://twitter.com/riannone?lang=en) is one of the developers of the `gt` package. You can [watch this video](https://www.youtube.com/watch?v=z0UGmMOxl-c&t=1s) where he introduces the package and does a live walk through of creating gt tables.

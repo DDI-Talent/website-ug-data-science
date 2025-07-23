@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Writing Functions in R – Data Science for Health and Biomedical Sciences</title>
+<title>Optional: Writing Functions in R – Data Science for Health and Biomedical Sciences</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -440,6 +475,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Tutorial materials</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/writing-functions-in-R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Optional: Writing Functions in R</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -640,15 +681,23 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#writing-functions" id="toc-writing-functions" class="nav-link active" data-scroll-target="#writing-functions"><strong>Writing Functions</strong></a></li>
+  <li><a href="#applying-functions" id="toc-applying-functions" class="nav-link" data-scroll-target="#applying-functions">Applying Functions</a></li>
+  <li><a href="#writing-custom-plotting-functions-with-ggplot2" id="toc-writing-custom-plotting-functions-with-ggplot2" class="nav-link" data-scroll-target="#writing-custom-plotting-functions-with-ggplot2">Writing Custom Plotting Functions with ggplot2</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/week-5/index.html">Week 5: Making Maps and Tables in R</a></li><li class="breadcrumb-item"><a href="../../content/week-5/writing-functions-in-R.html">Optional: Writing Functions in R</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Writing Functions in R</h1>
+<h1 class="title">Optional: Writing Functions in R</h1>
 </div>
 
 
@@ -665,8 +714,406 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="writing-functions" class="level3">
+<h3 class="anchored" data-anchor-id="writing-functions"><strong>Writing Functions</strong></h3>
+<section id="objectives" class="level4">
+<h4 class="anchored" data-anchor-id="objectives"><strong>Objectives</strong></h4>
+<ul>
+<li><p>Understand the structure and purpose of functions in R.</p></li>
+<li><p>Develop skills in writing functions in R.</p></li>
+</ul>
+</section>
+<section id="why-do-we-use-functions" class="level4">
+<h4 class="anchored" data-anchor-id="why-do-we-use-functions"><strong>Why Do We Use Functions?</strong></h4>
+<p>Functions are a way of writing code that reduces the <em>repetition</em> of your code. They are a way to avoid copying and pasting bits of code throughout your script. To quote Hadley Wickham (creator of tidyverse):</p>
+<p><strong><em>“One of the best ways to improve your reach as a data scientist is to write functions. Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting. Writing a function has four big advantages over using copy-and-paste.”</em></strong></p>
+<p>His 4 big advantages are:</p>
+<ol type="1">
+<li><p>You can give a function an evocative name that makes your code easier to understand.</p></li>
+<li><p>As requirements change, you only need to update code in one place, instead of many.</p></li>
+<li><p>You eliminate the chance of making incidental mistakes when you copy and paste (i.e.&nbsp;updating a variable name in one place, but not in another).</p></li>
+<li><p>It makes it easier to reuse work from project-to-project, increasing your productivity over time.</p></li>
+</ol>
+</section>
+<section id="how-do-i-know-when-to-write-a-function" class="level4">
+<h4 class="anchored" data-anchor-id="how-do-i-know-when-to-write-a-function"><strong>How do I know when to write a function?</strong></h4>
+<p><strong><em>“A good rule of thumb is to consider writing a function whenever you’ve copied and pasted a block of code more than twice (i.e.&nbsp;you now have three copies of the same code)”</em></strong></p>
+<p>Attribution: <a href="https://r4ds.hadley.nz/functions">“R for Data Science: Functions”</a> by Hadley Wickham is licensed under CC BY-NC-ND 3.0 US</p>
+</section>
+<section id="anatomy-of-a-function" class="level4">
+<h4 class="anchored" data-anchor-id="anatomy-of-a-function"><strong>Anatomy of a Function</strong></h4>
+<p>Ok, but what does a function look like? Here is a simple example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic function structure</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1, arg2) {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> arg1 <span class="sc">+</span> arg2</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s break it down into the key parts:</p>
+<ol type="1">
+<li><p><strong>name</strong>of the function. This is usually a verb, because functions ‘do’ things.</p></li>
+<li><p><strong>function</strong>is a keyword in R and is required to create a function.</p></li>
+<li><p><strong>arguments</strong>(also known as parameters but let’s not get too scientific) are values that are ‘passed in’ to the function.</p></li>
+<li><p><strong>curly brackets</strong>define the<strong>body</strong>of the function. This is a black box world that has access to the arguments that are passed in.</p></li>
+<li><p><strong>return</strong>keyword defines what the output should be. (But as we’ll see, we don’t actually need it!)</p></li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/function_anatomy.png" class="center img-fluid quarto-figure quarto-figure-center figure-img" width="563"></p>
+</figure>
+</div>
+</section>
+<section id="input-and-output" class="level4">
+<h4 class="anchored" data-anchor-id="input-and-output"><strong>Input and Output</strong></h4>
+<p>So the arguments of a function are the input and the return keyword defines the output.</p>
+<p>A washing machine is a good metaphor. Let’s say the washing machine is the function - a black box so to speak. The laundry and detergent are the inputs and the clean laundry is the output.</p>
+</section>
+<section id="implicit-returns" class="level4">
+<h4 class="anchored" data-anchor-id="implicit-returns"><strong>Implicit Returns</strong></h4>
+<p>Usually in R, we skip the return keyword and the function knows to return the last thing that was defined within in. So our example above would become:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Implicit return</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1, arg2) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> arg1 <span class="sc">+</span> arg2</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We could even skip the aassignemt to the result variable. Hence our function becomes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Implicit return</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1, arg2) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  arg1 <span class="sc">+</span> arg2</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This still behaves the same way but we have removed the return statement and the variable assignment. The result value will be returned because it is the last thing that is defined in the function body. This means less code. Yay!</p>
+</section>
+<section id="defining-running-functions" class="level4">
+<h4 class="anchored" data-anchor-id="defining-running-functions"><strong>Defining &amp; Running Functions</strong></h4>
+<p>When you define a function, you’re saying to R “please read this piece of code (the function) and store it for later use”.</p>
+<p>When you run a function, you are asking it to execute. Let’s write an example in RStudio.</p>
+<p><strong><em>NOTE: “call”, “run”, “execute” and “invoke” are all words for the same thing.</em></strong></p>
+<p>If you haven’t already, create a new project or use the project you are currently in. Create a new R Markdown file and save it as my_functions.Rmd.</p>
+<p>Write the following code in a code chunk:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>calculate_area <span class="ot">&lt;-</span> <span class="cf">function</span>(length, width) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  length <span class="sc">*</span> width</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>What do you notice when you run this code?</p>
+<p>Nothing happens! You will however, find our function definition in the Environment tab. That means, our function has been <strong>defined</strong>.</p>
+<p>The key thing about functions is that we <strong>define</strong> them once but can call them <strong>many times</strong>.</p>
+<p>Let’s add some code to call our function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AS BEFORE</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>calculate_area <span class="ot">&lt;-</span> <span class="cf">function</span>(length, width) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  length <span class="sc">*</span> width</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">calculate_area</span>(<span class="dv">50</span>, <span class="dv">10</span>) <span class="co"># ADDED</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this case, we ask R to call the function with the values 50 for length and 10 for width.</p>
+<p>Execute the code by clicking the “Source” button. What did you expect to happen? Given the arguments 50 and 10, you might have expected to see 500 output somewhere because the calculate_area function multiplies length and width and returns the area.</p>
+<p>In fact, the function <em>has</em> done this but the return value (i.e.&nbsp;500) has been lost because we haven’t done anything with the return value.</p>
+<p>Let’s fix this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AS BEFORE</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>calculate_area <span class="ot">&lt;-</span> <span class="cf">function</span>(length, width) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  length <span class="sc">*</span> width</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>area <span class="ot">&lt;-</span> <span class="fu">calculate_area</span>(<span class="dv">50</span>, <span class="dv">10</span>) <span class="co"># NEW</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>area <span class="co"># NEW</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Success! You will see that 500 has been printed in the console. Try adding some more function calls to your script:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ... AS BEFORE</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>large_area <span class="ot">&lt;-</span> <span class="fu">calculate_area</span>(<span class="dv">2020</span>, <span class="dv">900</span>) <span class="co"># NEW</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(large_area) <span class="co"># 1818000</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>small_area <span class="ot">&lt;-</span> <span class="fu">calculate_area</span>(<span class="dv">2</span>, <span class="dv">2</span>) <span class="co"># NEW</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>small_area <span class="co"># 4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="practice-writing-your-own-functions" class="level4">
+<h4 class="anchored" data-anchor-id="practice-writing-your-own-functions"><strong>Practice writing your own functions</strong></h4>
+<ol type="1">
+<li><p>Define a function called <strong>add_two_numbers()</strong> that takes two arguments, adds them together, and returns the result. Remember to call the function and print out the result!</p></li>
+<li><p>Define a function called <strong>square_number()</strong> that takes a single argument and returns its square.</p></li>
+<li><p>Define a function called <strong>is_even()</strong> that takes one argument, checks if the number is even or odd, and returns TRUE for even numbers and FALSE for odd numbers. HINT use the modulo operator %%.</p></li>
+</ol>
+</section>
+<section id="a-note-on-default-arguments" class="level4">
+<h4 class="anchored" data-anchor-id="a-note-on-default-arguments"><strong>A note on default arguments</strong></h4>
+<p>Consider the following code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>happy_birthday <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">input =</span> <span class="st">"you"</span>) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">"Happy birthday to "</span>, input)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">happy_birthday</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>What do you hypothesise this code will do when we run it? Run the code and see if you are right.</p>
+<p>Notice that when we called the function happy_birthday() we didn’t pass in any arguments. We can either pass in an argument or we can skip it. If we skip it, it will default to “you”. But if we pass in an argument, the input will be assigned that value instead.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">happy_birthday</span>(<span class="st">"Zaphod"</span>) <span class="co"># Happy birthday to Zaphod</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="key-takeaways" class="level4">
+<h4 class="anchored" data-anchor-id="key-takeaways"><strong>Key Takeaways</strong></h4>
+<ul>
+<li><p><strong>Functions in R</strong> help reduce code repetition, improve readability, and minimise errors by allowing you to encapsulate common tasks into reusable blocks of code.</p></li>
+<li><p><strong>Naming functions</strong> descriptively (usually as verbs) makes the purpose of your code clearer. Well-named functions improve the understanding and maintainability of your code.</p></li>
+<li><p><strong>Inputs (arguments)</strong> are passed into functions, and outputs are returned. You can use a function like a “black box” that processes inputs and produces outputs, similar to how a washing machine takes in laundry and detergent and returns clean laundry.</p></li>
+<li><p><strong>Return values</strong> can be specified explicitly using return() but we usually omit the return keyword.</p></li>
+<li><p><strong>Function definitions</strong> store code to be run later, and once defined, the function can be called multiple times with different inputs.</p></li>
+<li><p><strong>Default arguments</strong> allow flexibility in function calls, providing default values when no input is given, but allowing custom inputs when needed.</p></li>
+</ul>
+</section>
+</section>
+<section id="applying-functions" class="level3">
+<h3 class="anchored" data-anchor-id="applying-functions">Applying Functions</h3>
+<section id="objectives-1" class="level4">
+<h4 class="anchored" data-anchor-id="objectives-1"><strong>Objectives</strong></h4>
+<ul>
+<li><p>Know how to apply functions in several contexts</p></li>
+<li><p>Develop skills writing <strong>vector functions</strong> and <strong>data frame functions</strong></p></li>
+</ul>
+<p>Now that we’ve understood the basic structure of functions, let’s apply this knowledge to more practical contexts.</p>
+</section>
+<section id="vector-functions" class="level4">
+<h4 class="anchored" data-anchor-id="vector-functions"><strong>Vector Functions</strong></h4>
+<p>Vector functions take one or more vectors as arguments and return a vector. Let’s look at an example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>add_vectors <span class="ot">&lt;-</span> <span class="cf">function</span>(vec1, vec2) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  vec1 <span class="sc">+</span> vec2</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>sum_vector <span class="ot">&lt;-</span> <span class="fu">add_vectors</span>(v1, v2)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>sum_vector  <span class="co"># c(5, 7, 9)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this example, the function is called <strong>add_vectors</strong> and it takes 2 <strong>arguments</strong>. The return value is the sum of the vectors.</p>
+<p>We call the function and pass in <strong>v1</strong> and <strong>v2</strong>. The result is <strong>c(5, 7, 9)</strong></p>
+</section>
+<section id="a-more-complex-example" class="level4">
+<h4 class="anchored" data-anchor-id="a-more-complex-example"><strong>A More Complex Example</strong></h4>
+<p>In this example we’ll tackle the following problem:</p>
+<p><strong>Given a vector of peoples birthdates, write a function to compute their age in years.</strong></p>
+<p>What steps do we need to create a function?</p>
+<ol type="1">
+<li><p>A function <strong>name</strong>. It should be a <strong>verb</strong> so let’s call it <strong>get_ages</strong></p></li>
+<li><p>Define the <strong>arguments</strong>. In this case we will have one argument. It should be a noun so let’s call it <strong>birth_dates</strong></p></li>
+<li><p>The <strong>body</strong> of the function. This is the code between the curly brackets that does some work and returns a value. In this case, calculate ages.</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>get_ages <span class="ot">&lt;-</span> <span class="cf">function</span>(birth_dates) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: calculate ages</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Try defining and calling this function yourself. Give it a go! Then check the solution.</p>
+<p><strong>HINT:</strong> Load the <strong>lubridate</strong> library so you can use the <strong>now()</strong> and <strong>interval()</strong> functions.</p>
+</section>
+<section id="solution" class="level4">
+<h4 class="anchored" data-anchor-id="solution"><strong>Solution</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>get_ages <span class="ot">&lt;-</span> <span class="cf">function</span>(birthdates) {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  birthdates_as_dates <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(birthdates)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  todays_date <span class="ot">&lt;-</span> <span class="fu">now</span>()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  ages <span class="ot">&lt;-</span> <span class="fu">interval</span>( birthdates_as_dates, todays_date ) <span class="sc">/</span> <span class="fu">years</span>(<span class="dv">1</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>( <span class="fu">floor</span>(ages) ) </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>example_birthdates <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"2001-02-19"</span>, <span class="st">"1972-02-18"</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># run, execute, call</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">get_ages</span>(example_birthdates) <span class="co"># 23 52</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: The body of your function might be slightly different to this solution but might achieve the same thing. There's no one answer in coding! The key thing is to understand how functions work.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Question:</strong> Think about how you would explain the two variables <strong>example_birthdates</strong> and <strong>birthdates</strong> to another person.</p>
+<p><strong>Solution:</strong> One possible way to explain them is: <strong>example_birthdates</strong> is the value that is passed in to the function <strong>get_ages</strong>. <strong>get_ages</strong> has an argument defined as <strong>birthdates</strong>.</p>
+<p>Watch an example below of defining and running a function.</p>
+</section>
+<section id="video-defining-and-running-an-age-vector-function-709" class="level4">
+<h4 class="anchored" data-anchor-id="video-defining-and-running-an-age-vector-function-709"><strong>Video: Defining and running an age vector function (7:09)</strong></h4>
+<p><a href="https://media.ed.ac.uk/media/Function+example+-+creating+an+age+vector/1_yktmpwo1">Watch the video here</a></p>
+</section>
+<section id="dataframe-functions" class="level4">
+<h4 class="anchored" data-anchor-id="dataframe-functions"><strong>Dataframe functions</strong></h4>
+<p>Often, we find ourselves copying and pasting multiple <strong>dplyr</strong> verbs. For example, have you ever wanted to <strong>count()</strong> a variable and add a column to show the proportions?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># E.G.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(my_var) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s take an example. Consider the following code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># https://x.com/Diabb6/status/1571635146658402309</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># https://r4ds.hadley.nz/functions#common-use-cases</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>count_prop <span class="ot">&lt;-</span> <span class="cf">function</span>(df, var, <span class="at">sort =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>({{ var }}, <span class="at">sort =</span> sort) <span class="sc">%&gt;%</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Call the function</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>diamonds <span class="sc">%&gt;%</span> <span class="fu">count_prop</span>(clarity)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>mpg <span class="sc">%&gt;%</span> <span class="fu">count_prop</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s break it down:</p>
+<ol type="1">
+<li><p>The function <strong>name</strong> is <strong>count_prop</strong></p></li>
+<li><p>The <strong>arguments</strong> are <strong>df</strong>, <strong>var</strong> and <strong>sort</strong></p></li>
+<li><p>The <strong>body</strong> of the function pipes the given dataframe into <strong>count</strong> and <strong>mutate</strong> and returns a dataframe (tibble)</p></li>
+</ol>
+<p>When we call the function, we pipe in the dataframe (in this case <strong>diamonds</strong> and <strong>mpg</strong>) which will be the value of the <strong>df</strong> argument. <strong>clarity</strong> and <strong>model</strong> are variables that will become the value of <strong>var</strong> and <strong>sort</strong> is not passed into the function so the default value (FALSE) is used in the function body.</p>
+<p>Basically, we’ve created our own custom <strong>dplyr</strong> style function. Nice!</p>
+<p>Did you spot the weird curly braces around the <strong>var</strong> keyword? This is known as <strong>embracing</strong>. We need these in order to tell <strong>dplyr</strong> to use the <strong>value</strong> of the variable rather than the literal word ‘var’. In this example the values will be <strong>clarity</strong> and <strong>model</strong>. This can be a difficult concept to get your head around. You can read a further explanation here -&gt; <a href="https://r4ds.hadley.nz/functions#indirection-and-tidy-evaluation" class="uri">https://r4ds.hadley.nz/functions#indirection-and-tidy-evaluation</a></p>
+<p>Can you think of other situations when you have thought <em>“I wish there was a dplyr function that did x,y,z”</em>? If so, try writing one!</p>
+<p>More examples can be found <a href="https://r4ds.hadley.nz/functions#common-use-cases">here</a></p>
+</section>
+<section id="video-a-closer-look-at-embracing" class="level4">
+<h4 class="anchored" data-anchor-id="video-a-closer-look-at-embracing"><strong>Video: A closer look at “embracing”</strong></h4>
+<p><a href="https://media.ed.ac.uk/media/A+further+look+at+%22embracing%22/1_oywvhmi7">Watch the video here</a></p>
+</section>
+<section id="a-note-on-style" class="level4">
+<h4 class="anchored" data-anchor-id="a-note-on-style"><strong>A note on style</strong></h4>
+<p>Thinking of good function names is not easy but it’s worth taking a few minutes to think about it before jumping to a name.</p>
+<p><strong>func1</strong> or <strong>func2</strong> are not good names because:</p>
+<ol type="1">
+<li><p>They are not descriptive of what they do.</p></li>
+<li><p>They are not verbs.</p></li>
+</ol>
+<p>There’s little, if any, value in making function (or indeed) variable names as short as possible. Longer and more descriptive is always better.</p>
+<p>Examples of better names would be:</p>
+<p><strong>strip_white_space()</strong></p>
+<p><strong>calculate_mean()</strong></p>
+<p><strong>plot_histogram()</strong></p>
+<p><strong>filter_data()</strong></p>
+<p>These are good examples because they are descriptive and action-oriented, telling you exactly what the function is intended to do.</p>
+</section>
+<section id="key-takeaways-1" class="level4">
+<h4 class="anchored" data-anchor-id="key-takeaways-1"><strong>Key Takeaways</strong></h4>
+<ul>
+<li><p>Functions help you organize reusable code.</p></li>
+<li><p><strong>Vector functions:</strong> Operate on vectors and return vector outputs (e.g., add_vectors()).</p></li>
+<li><p><strong>Data frame functions:</strong> Combining dplyr functions (like count() and mutate()) into custom functions saves time and reduces redundancy (e.g., count_prop()).</p></li>
+<li><p><strong>Embracing</strong>: {{ }} is shorthand for <strong>embracing</strong> arguments in tidyverse functions. It allows you to pass column names or expressions as arguments in functions.</p></li>
+<li><p><strong>Good naming matters:</strong> Use descriptive, action-oriented names for functions to improve code readability and understanding.</p></li>
+<li><p><strong>Practice makes perfect:</strong> Developing your own functions, especially with clear names and focused tasks, makes your R coding more efficient and scalable.</p></li>
+</ul>
+</section>
+</section>
+<section id="writing-custom-plotting-functions-with-ggplot2" class="level3">
+<h3 class="anchored" data-anchor-id="writing-custom-plotting-functions-with-ggplot2">Writing Custom Plotting Functions with ggplot2</h3>
+<section id="objectives-2" class="level4">
+<h4 class="anchored" data-anchor-id="objectives-2"><strong>Objectives</strong></h4>
+<ul>
+<li><p>Learn how to encapsulate repetitive plotting tasks into functions.</p></li>
+<li><p>Understand how to pass data and aesthetic mappings into custom <strong>ggplot2</strong> functions.</p></li>
+<li><p>Write flexible functions that allow for optional customisation of plots.</p></li>
+</ul>
+</section>
+<section id="plotting-functions-with-ggplot2" class="level4">
+<h4 class="anchored" data-anchor-id="plotting-functions-with-ggplot2"><strong>Plotting Functions with ggplot2</strong></h4>
+<p>In <strong>ggplot2</strong>, you often find yourself writing similar code multiple times with only slight variations, such as changing the data or the variables being plotted. This can lead to copying and pasting code, which makes your script harder to manage and debug. Functions to the rescue! Can you see how functions can help you simplify your workflow, reduce errors and make your code easier to maintain?</p>
+<p>Let’s look at an example. You can code along with these examples in a new R or markdown file, or use the file you created previously.</p>
+</section>
+<section id="a-simple-scatter-plot-function" class="level4">
+<h4 class="anchored" data-anchor-id="a-simple-scatter-plot-function"><strong>A Simple Scatter Plot Function</strong></h4>
+<p>Let’s start by writing a function that returns a plot, given a dataset and any two variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the ggplot2 library (or tidyverse)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a custom plotting function for scatter plots</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>scatter_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(df, x_var, y_var) {</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x =</span> {{ x_var }}, <span class="at">y =</span> {{ y_var }})) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Scatter plot of"</span>, <span class="fu">deparse</span>(<span class="fu">substitute</span>(x_var)), <span class="st">"vs"</span>, <span class="fu">deparse</span>(<span class="fu">substitute</span>(y_var))))</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage with built-in dataset</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>diamonds <span class="sc">%&gt;%</span> <span class="fu">scatter_plot</span>(price, carat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(diamonds is a built-in dataset containing the prices and other attributes of almost 54,000 diamonds).</p>
+<p>Remember, the double curly brackets around the <strong>x_var</strong> and <strong>y_var</strong> are to tell R to use the <strong>value</strong> of the variable. In this example the values will be <strong>price</strong> and <strong>carat</strong>.</p>
+<ul>
+<li><p><strong>Function Arguments:</strong></p></li>
+<li><p><strong>df</strong>: The dataset to use.</p></li>
+<li><p><strong>x_var</strong> and <strong>y_var</strong>: The variables to plot on the x and y axes.</p></li>
+<li><p><strong>ggplot2 Aesthetic Mapping (aes):</strong> We use curly brackets {{ }} to pass the variables to the aes function, allowing us to pass column names directly.</p></li>
+<li><p><strong>Title Creation:</strong></p></li>
+<li><p>The <strong>deparse(substitute(x_var))</strong> captures the variable name for the plot title.</p></li>
+</ul>
+<p>Try using this function on another dataset of your choice. <u><strong>NOTE</strong></u>: You’ll have to load in the dataset or use a built-in one!</p>
+</section>
+<section id="customising-our-plot-further" class="level4">
+<h4 class="anchored" data-anchor-id="customising-our-plot-further"><strong>Customising our plot further</strong></h4>
+<p>We can enhance the function by allowing more customisation, such as the colour of points and the size of the title.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the ggplot2 library (or tidyverse)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>scatter_plot_custom <span class="ot">&lt;-</span> <span class="cf">function</span>(df, x_var, y_var, <span class="at">colour =</span> <span class="st">"blue"</span>, <span class="at">title_size =</span> <span class="dv">14</span>) {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> {{ x_var }}, <span class="at">y =</span> {{ y_var }})) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">colour =</span> colour) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Scatter plot of"</span>, <span class="fu">deparse</span>(<span class="fu">substitute</span>(x_var)), <span class="st">"vs"</span>, <span class="fu">deparse</span>(<span class="fu">substitute</span>(y_var)))) <span class="sc">+</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> title_size))</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage with custom parameters</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">scatter_plot_custom</span>( wt, mpg, <span class="at">colour =</span> <span class="st">"darkgrey"</span>, <span class="at">title_size =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p><strong>Default Arguments:</strong> The <strong>colour</strong> and <strong>title_size</strong> arguments let the user modify the appearance of the plot without changing the core structure.</p></li>
+<li><p><strong>Default Values:</strong> If the user doesn’t specify a colour or title size, the function uses default values (“blue” for colour and 14 for title size).</p></li>
+</ul>
+</section>
+<section id="a-histogram-example" class="level4">
+<h4 class="anchored" data-anchor-id="a-histogram-example"><strong>A Histogram example</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Attribution: https://r4ds.hadley.nz/functions.html#plot-functions</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>histogram <span class="ot">&lt;-</span> <span class="cf">function</span>(data, var, <span class="at">binwidth =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">%&gt;%</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> {{ var }})) <span class="sc">+</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> binwidth)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>diamonds <span class="sc">%&gt;%</span> <span class="fu">histogram</span>(carat, <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Further Examples: <a href="https://r4ds.hadley.nz/functions.html#plot-functions" class="uri">https://r4ds.hadley.nz/functions.html#plot-functions</a></p>
+</section>
+<section id="key-takeaways-2" class="level4">
+<h4 class="anchored" data-anchor-id="key-takeaways-2"><strong>Key Takeaways</strong></h4>
+<p>By writing custom plotting functions:</p>
+<ul>
+<li><p>You can reuse code, avoid repetitive work, and make your scripts cleaner and more flexible.</p></li>
+<li><p>Plotting functions can be made more customisable by allowing arguments for anything you want to be made more flexible.</p></li>
+</ul>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
