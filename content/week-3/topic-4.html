@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Plotting data with ggplot2 – Data Science for Health and Biomedical Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../..//favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-90f04b72c0d2553d43eea12922077095.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Data Science for Health and Biomedical Sciences</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-course-information" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Course Information</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-course-information">    
+        <li>
+    <a class="dropdown-item" href="../../course-information/welcome.html">
+ <span class="dropdown-text">Welcome and Learning Outcomes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../course-information/index.html">
+ <span class="dropdown-text">Course Information</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../course-information/timetable.html">
+ <span class="dropdown-text">Timetable</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../course-information/library-resources.html">
+ <span class="dropdown-text">Library Resources</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../course-information/course-contacts.html">
+ <span class="dropdown-text">Course Contacts</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../course-information/gen-ai-guidance.html">
+ <span class="dropdown-text">Gen AI Guidance</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../course-information/help-and-support.html">
+ <span class="dropdown-text">Help and Support</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="../../content/index.html" aria-current="page"> 
+<span class="menu-text">Content</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../assessment/index.html"> 
+<span class="menu-text">Assessment</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/week-3/index.html">Week 3: Data Visualisation and Storytelling</a></li><li class="breadcrumb-item"><a href="../../content/week-3/topic-4.html">Topic 4: Plotting data with ggplot2</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Content</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Readings, videos and exercises</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 1: Introduction</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Introduction to Health Data Science</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: The Role of Ethics in Health and Social Care</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Getting started with R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/topic-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 4: Types of Health Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/topic-5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 5: Guide to R Markdown</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/topic-6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 6: Troubleshooting and Error Messages</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/further-resources.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Further Optional Resources</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-1/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 2: Data Tidying and Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: The Tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Importing Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Exploring Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/topic-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 4: Ethical Dilemmas in Health Care Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/topic-5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 5: Files and Folders</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Week 3: Data Visualisation and Storytelling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Data Visualisation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Data visualisation aims</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Data Storytelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Topic 4: Plotting data with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 5: Going Further with R Markdown</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 6: More Wrangling and Plotting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-3/topic-7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 7: Introduction to GitHub</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-2/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 4: Analysing and Presenting Data in R</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-4/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Wrangling factors and joins</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-4/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Fine-tuning plots</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-4/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Roundup and recap</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-4/data-engagements-and-controversies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Optional: Data Engagements &amp; Data Controversies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-4/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 5: Making Maps and Tables in R</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Introduction to Geospatial Data in R with sf and Tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Creating more exciting tables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/writing-functions-in-R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Optional: Writing Functions in R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-5/writing-functions-in-R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Optional: Writing Functions in R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 6: Machine Learning &amp; Analysing Clinical Text</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-6/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-6/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Machine Learning</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-6/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Analysing Clinical Text</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-6/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Embedding Ethics into Data Sharing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-6/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 7: Improving Healthcare Processes &amp; Integrating Health Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-7/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-7/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Computational Methods for Improving Healthcare Processes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-7/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Integrating Health Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-7/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Improving Healthcare Processes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-7/optional-nhs-r-modelling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">TBC: Optional: NHS R - modelling hospital flow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-7/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 8: Data and Identity</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-8/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-8/readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data and Identity - readings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-8/guest-lecture-slides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Guest lecture slides</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 9: Data Ownership</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-9/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-9/readings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reading: COVID and cause of death</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-9/visibility-of-what-slides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visibility of What?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-9/guest-lecture-slides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Guest lecture slides</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false">
+ <span class="menu-text">Week 10: Working with Genomic Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-10/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-10/topic-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 1: Genomic data: What is it and how to analyse it</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-10/topic-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 2: Genotyping, sequencing, and profiling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-10/topic-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 3: Genome-wide association studies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-10/topic-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topic 4:GWAS Resources</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../content/week-10/tutorial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-ggplot2-package" id="toc-the-ggplot2-package" class="nav-link active" data-scroll-target="#the-ggplot2-package">The ggplot2 package</a>
+  <ul class="collapse">
+  <li><a href="#copy-copy-copy" id="toc-copy-copy-copy" class="nav-link" data-scroll-target="#copy-copy-copy"><strong>Copy, Copy, Copy</strong></a></li>
+  </ul></li>
+  <li><a href="#the-core-elements" id="toc-the-core-elements" class="nav-link" data-scroll-target="#the-core-elements">The core elements</a>
+  <ul class="collapse">
+  <li><a href="#the-elements-of-a-ggplot" id="toc-the-elements-of-a-ggplot" class="nav-link" data-scroll-target="#the-elements-of-a-ggplot"><strong>The Elements of a ggplot</strong></a></li>
+  <li><a href="#the-canvas-data-and-aesthetics" id="toc-the-canvas-data-and-aesthetics" class="nav-link" data-scroll-target="#the-canvas-data-and-aesthetics"><strong>The Canvas (data and aesthetics)</strong></a></li>
+  <li><a href="#the-geoms" id="toc-the-geoms" class="nav-link" data-scroll-target="#the-geoms"><strong>The Geoms</strong></a></li>
+  </ul></li>
+  <li><a href="#the-aesthetics-inside-and-outside" id="toc-the-aesthetics-inside-and-outside" class="nav-link" data-scroll-target="#the-aesthetics-inside-and-outside">The aesthetics: Inside and outside</a>
+  <ul class="collapse">
+  <li><a href="#the-aesthetics---outside" id="toc-the-aesthetics---outside" class="nav-link" data-scroll-target="#the-aesthetics---outside"><strong>The Aesthetics - Outside</strong></a></li>
+  <li><a href="#the-aesthetics---inside" id="toc-the-aesthetics---inside" class="nav-link" data-scroll-target="#the-aesthetics---inside"><strong>The Aesthetics - Inside</strong></a></li>
+  <li><a href="#aesthetics-galore" id="toc-aesthetics-galore" class="nav-link" data-scroll-target="#aesthetics-galore"><strong>Aesthetics galore!</strong></a></li>
+  </ul></li>
+  <li><a href="#additional-elements-facets-and-themes" id="toc-additional-elements-facets-and-themes" class="nav-link" data-scroll-target="#additional-elements-facets-and-themes">Additional elements: Facets and themes</a>
+  <ul class="collapse">
+  <li><a href="#faceting" id="toc-faceting" class="nav-link" data-scroll-target="#faceting"><strong>Faceting</strong></a></li>
+  <li><a href="#themes" id="toc-themes" class="nav-link" data-scroll-target="#themes"><strong>Themes</strong></a></li>
+  </ul></li>
+  <li><a href="#geoms-galore" id="toc-geoms-galore" class="nav-link" data-scroll-target="#geoms-galore">Geoms galore!</a></li>
+  <li><a href="#optional-practice" id="toc-optional-practice" class="nav-link" data-scroll-target="#optional-practice">Optional: Practice 👩‍💻</a>
+  <ul class="collapse">
+  <li><a href="#plot-1" id="toc-plot-1" class="nav-link" data-scroll-target="#plot-1"><strong>Plot 1</strong></a></li>
+  <li><a href="#plot-2" id="toc-plot-2" class="nav-link" data-scroll-target="#plot-2"><strong>Plot 2</strong></a></li>
+  </ul></li>
+  <li><a href="#optional-data-visualisation-using-ggplot2" id="toc-optional-data-visualisation-using-ggplot2" class="nav-link" data-scroll-target="#optional-data-visualisation-using-ggplot2">Optional: Data visualisation using ggplot2</a>
+  <ul class="collapse">
+  <li><a href="#data-visualisation-in-r-an-introduction-with-ggplot2" id="toc-data-visualisation-in-r-an-introduction-with-ggplot2" class="nav-link" data-scroll-target="#data-visualisation-in-r-an-introduction-with-ggplot2"><strong>Data visualisation in R, an introduction with ggplot2</strong></a></li>
+  </ul></li>
+  <li><a href="#optional-creating-a-line-graph-in-ggplot2" id="toc-optional-creating-a-line-graph-in-ggplot2" class="nav-link" data-scroll-target="#optional-creating-a-line-graph-in-ggplot2">Optional: Creating a line graph in ggplot2</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../content/week-3/index.html">Week 3: Data Visualisation and Storytelling</a></li><li class="breadcrumb-item"><a href="../../content/week-3/topic-4.html">Topic 4: Plotting data with ggplot2</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Plotting data with ggplot2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-ggplot2-package" class="level2">
+<h2 class="anchored" data-anchor-id="the-ggplot2-package">The ggplot2 package</h2>
+<p>Plotting in R is great because your code will always be there for you to check and reproduce what you did, and even better than that, you’ve already seen that you can start creating nice-looking plots straight away with just a few lines of code.</p>
+<p>It’s extremely satisfying to be able to produce multiple plots with consistent formatting by just changing one line here or there, and not having to remember what or where you clicked in a menu!</p>
+<p>The R package we use most frequently for plotting is ggplot2, and it’s part of the tidyverse which you’ll now be starting to get quite familiar with.</p>
+<p>Let’s start by looking at the main commands you need to know in ggplot2 and how to use these commands in order to display your data and format your plot the way you want.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.ggplot_exploratory.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="631"></p>
+</figure>
+</div>
+<p><a href="https://twitter.com/allison_horst?lang=en">artwork by Allison Horst</a></p>
+<p># Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join)</p>
+<section id="copy-copy-copy" class="level3">
+<h3 class="anchored" data-anchor-id="copy-copy-copy"><strong>Copy, Copy, Copy</strong></h3>
+<p>After opening a new script or RMarkdown file, the next thing we have to do is <strong>import our data.</strong></p>
+<p>Since we’re using the same data we have used before, the <a href="https://www.opendata.nhs.scot/dataset/cancelled-planned-operations/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884">Cancelled Planned Operations</a> dataset from <a href="https://www.opendata.nhs.scot/">Public Health Scotland</a>, we can just copy some of our previous code (look back at Week 2, topic 6). This is one of the great things about coding!</p>
+<p>You’ll spend a lot of time copying previous code you’ve written, copying code you’ve Googled on the web, or copying a colleague’s code. Don’t worry about trying to learn commands from memory. This will happen naturally for the ones you use most frequently, and for the rest, there is always Google or the <em>Help tab</em>!</p>
+<p><strong>Copy and paste</strong> the following code into your R Script or into a code chunk in your RMarkdown file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># library(lubridate)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">## library(lubridate) is only necessary if you are using Noteable, the newest version of tidyverse includes lubridate. If using Noteable, delete the # comment in the line above  </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in the cancellations dataset </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>cancelled_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://www.opendata.nhs.scot/dataset/479848ef-41f8-44c5-bfb5-666e0df8f574/resource/0f1cf6b1-ebf6-4928-b490-0a721cc98884/download/cancellations_by_board_august_2024.csv"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>hb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://www.opendata.nhs.scot/dataset/9f942fdb-e59e-44f5-b534-d6e17229cc7b/resource/652ff726-e676-4a20-abda-435b98dd7bdc/download/hb14_hb19.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>cancelled <span class="ot">&lt;-</span> cancelled_raw <span class="sc">%&gt;%</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Join cancelled to hb</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(hb, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"HBT"</span> <span class="ot">=</span> <span class="st">"HB"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select the variables we're interested in</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Month,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>         HBName,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>         TotalOperations,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>         TotalCancelled) <span class="sc">%&gt;%</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out/remove NA values (which were the code for a specific hospital) from HBName (SB0801 before the join) </span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(HBName <span class="sc">!=</span> <span class="st">"NA"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Reformat the month column to separate out year, month, day </span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Month =</span> <span class="fu">ymd</span>(Month, <span class="at">truncated =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We don’t need to load ggplot2 separately because it is loaded as part of the tidyverse set of packages.</p>
+<p>Having run that code, you should now see <strong>three objects</strong> in your environment tab. The two initial datasets we read in, and then our tidied dataset, cancelled.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><strong>Check the data</strong></p>
+<p>Click on cancelled to check that it has been read in ok. Remember we can do this by clicking on the object in the Environment tab and it will open in a new tab beside your script, looking just like a spreadsheet.</p>
+<p>We can also check the <strong>range</strong> of our data to see what time span is covered:</p>
+<p>Here we are using the year() function from lubridate to extract only the year from the part of the date in the Month variable.</p>
+<p>You should see the following output</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">distinct</span>(<span class="fu">year</span>(Month))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 1
+   `year(Month)`
+           &lt;dbl&gt;
+ 1          2015
+ 2          2016
+ 3          2017
+ 4          2018
+ 5          2019
+ 6          2020
+ 7          2021
+ 8          2022
+ 9          2023
+10          2024
+11          2025</code></pre>
+</div>
+</div>
+<p>We can use a similar bit of code to look at the Health Boards:</p>
+<p>From which you should see the following output</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">distinct</span>(HBName)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 1
+   HBName                       
+   &lt;chr&gt;                        
+ 1 NHS Ayrshire and Arran       
+ 2 NHS Borders                  
+ 3 NHS Dumfries and Galloway    
+ 4 NHS Fife                     
+ 5 NHS Forth Valley             
+ 6 NHS Grampian                 
+ 7 NHS Greater Glasgow and Clyde
+ 8 NHS Highland                 
+ 9 NHS Lanarkshire              
+10 NHS Lothian                  
+11 NHS Orkney                   
+12 NHS Shetland                 
+13 NHS Tayside                  
+14 NHS Western Isles            </code></pre>
+</div>
+</div>
+<p>Notice that in both of these chunks of code, we have not assigned the value to an object. That is, we have not given them names using the assignment operator &lt;- and so they have not appeared in our environment.</p>
+<p>That’s because we’re just doing a quick check. This code is not particularly relevant to our plotting or analysis code. So we can either write and run it in a code chunk, then delete it if we don’t want to keep it there, or we can run it in the console so that it doesn’t get saved in our RMD file. Either is fine.</p>
+</section>
+</section>
+<section id="the-core-elements" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-elements">The core elements</h2>
+<section id="the-elements-of-a-ggplot" class="level3">
+<h3 class="anchored" data-anchor-id="the-elements-of-a-ggplot"><strong>The Elements of a ggplot</strong></h3>
+<p>The first command you’ll need for creating any type of plot is the command ggplot(). The “gg” in ggplot stands for “<strong>grammar of graphics</strong>” and it has to do with the layering framework which we use to build up our plots.</p>
+<p>We’re familiar with the grammar of the English language, which refers to the structure of the language and the rules we use to construct meaningful sentences. Similar concepts have been applied to plotting with ggplot2.</p>
+<p>There is a structure of <strong>layers</strong>, a bit like the adjectives, nouns, and verbs, in the English language, and then there are the rules for how we assemble these layers (also called aesthetic mappings).</p>
+<p>We’ll look in more depth at how these elements interact later in this topic, but for just now it’s worth noting that this setup makes it a lot easier to produce informative plots in R.</p>
+<p>There are <strong>7 main elements</strong> or layers we can use in our plots, and 3 of these are essential, without which, the plot just won’t work. We’ll explore the essential elements first, then go on to look at a few additional ones too.</p>
+<p>The 3 essential elements are:</p>
+<ul>
+<li><p>the <strong>data</strong> - fairly obvious, without this we wouldn’t have a plot!</p></li>
+<li><p>the <strong>aesthetics</strong> - how we map our data onto the canvas (e.g., x and y variables).</p></li>
+<li><p>the <strong>geometrical</strong> <strong>objects</strong> - the type of plot we want to make, (e.g., scatter, bar, line, etc.).</p></li>
+</ul>
+<p>Some of the non-essential elements include:</p>
+<ul>
+<li><p>a <strong>facet</strong> layer - allows us to subset our data so that we can view multiple plots side by side, and arranged by category.</p></li>
+<li><p>a <strong>theme</strong> layer, which will provide the finishing touch to make our plots look lovely.</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.ggplot2 elements.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="the-canvas-data-and-aesthetics" class="level3">
+<h3 class="anchored" data-anchor-id="the-canvas-data-and-aesthetics"><strong>The Canvas (data and aesthetics)</strong></h3>
+<p>Let’s start with the plotting function ggplot() which lets R know we are about to create a plot. And we’ll specify which variables we want to display on the x and y axes. Copy and paste the following code below the last bit of code in your script:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a> cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A blank canvas should have appeared in your <em>Plots</em> <em>tab</em> or under your code chunk if you have your output showing inline in RMarkdown (the default). This is the first layer in our plot and lets us know… that R knows… that we want to create a plot, but there are no data points yet.</p>
+<ul>
+<li><p>the <strong>data</strong> cancelled is being piped into our ggplot() function, the starting point for all our plots</p></li>
+<li><p>the <strong>aesthetics</strong> are present within the aes() function letting R know what we want on the x and y axes</p></li>
+<li><p>the <strong>geometrical</strong> <strong>objects</strong> layer is missing!</p></li>
+</ul>
+<p>Without the <strong>geometrical</strong> layer, R doesn’t know what type of plot to make.</p>
+</section>
+<section id="the-geoms" class="level3">
+<h3 class="anchored" data-anchor-id="the-geoms"><strong>The Geoms</strong></h3>
+<p>We use, what are called, <strong>geoms</strong> (short for geometrical objects or geometries) to let R know the <strong>type of plot</strong> we want.</p>
+<p>To add a layer in ggplot2, we have to make sure to add a + sign at the end of each line. This + sign behaves in a very similar way to the %&gt;% operator we are already familiar with, and indeed there has been some discussion surrounding the development of the ggplot2 package, as to whether the %&gt;% should be used instead of the + but for various reasons the + remains. We just need to remember that everything after the ggplot() function needs a + sign.</p>
+<p>Let’s add a geom, and since we’re looking at changes over time, let’s add a geom to create a line graph, geom_line():</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now we have a complete plot, with only 3 short lines of code! But, our lines don’t look right. That’s because for each date in our dataset, we have observations or values for 14 different Health Boards, and ggplot2 joins the points for all of these Health Board values first before moving on to the next date and so forth. To correct this, all we need to do is add a group mapping within our aes() function. This lets R know that each category within the specified group gets its own line:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations, <span class="at">group =</span> HBName)) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now we have a complete plot, with only 3 short lines of code! But, our lines don’t look right. That’s because for each date in our dataset, we have observations or values for 14 different Health Boards, and ggplot2 joins the points for all of these Health Board values first before moving on to the next date and so forth. To correct this, all we need to do is add a group mapping within our aes() function. This lets R know that each category within the specified group gets its own line:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cancelled<span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span>TotalOperations, <span class="at">group =</span>HBName)) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There are various geoms that we can use, and we’ll cover these in more detail later in the topic. For example, we have geoms for bar charts, line plots, heat maps, scatter plots, box plots, and density plots. You name it, there’s probably a geom for it! There are currently at least 40 geoms from which to choose!</p>
+</section>
+</section>
+<section id="the-aesthetics-inside-and-outside" class="level2">
+<h2 class="anchored" data-anchor-id="the-aesthetics-inside-and-outside">The aesthetics: Inside and outside</h2>
+<section id="the-aesthetics---outside" class="level3">
+<h3 class="anchored" data-anchor-id="the-aesthetics---outside"><strong>The Aesthetics - Outside</strong></h3>
+<p>The aesthetics is where all the cool stuff happens in ggplot2. This is where the values in our columns (our variables) are converted into visual scales, be that x- or y-axis scales, or colour or size scales. The aes() function allows us to access and visualise large amounts of information <strong>quickly</strong> and <strong>efficiently</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations, <span class="at">group =</span> HBName)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"darkgreen"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What we can include or not include within the aesthetic argument however, is sometimes slightly confusing, and an argument such as colour, which we see here, has a slightly different purpose depending on where it appears in our code, so let’s dive a little bit deeper into this.</p>
+<p>Aesthetic-type arguments, e.g.&nbsp;line type and colour, can be specified both inside, and outside of the aesthetic brackets ( aes() ), but they have different roles to play in the different settings.</p>
+<p>In the code above we can see that the colour aesthetic is set to “darkgreen” which lets R know that we want all of the lines to be dark green.</p>
+<p>R understands a lot of colours by their name, so try out a few and see how good it is! Change the code above to be a color of your choosing - but do not forget the quotation marks around the name (demarking a character string). For a more nuanced choice of colours, R also understands hex (hexadecimal) codes so you have a full range of colours at your fingertips. More on colour palettes later.</p>
+<p>Coming back to our code example above, we can see that the colour argument <em>is not</em> within the aesthetic brackets, it’s included instead, inside geom_line(). This is because it has been set to a <strong>single value</strong> (“darkgreen”), and so that colour is the same for all points in the dataset, <em>regardless</em> of the values in the dataset.</p>
+<p>If we wanted our data points to have a different shape or colour, <em>depending</em> on the values in the dataset, we would have to pass colour as an aesthetic argument, <em>inside</em> the brackets.</p>
+</section>
+<section id="the-aesthetics---inside" class="level3">
+<h3 class="anchored" data-anchor-id="the-aesthetics---inside"><strong>The Aesthetics - Inside</strong></h3>
+<p>At the moment, our plot is very busy, it’s hard to distinguish between the different Health Boards and it would be useful to make them more visible by assigning each a different colour, so let’s add colour = HBName <em>within</em> our aesthetic mapping:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations, <span class="at">colour =</span> HBName)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Notice that we no longer need to specify group = HBName in our aesthetics because the colour attribute is both grouping <em>and</em> colouring each category within HBName.</p>
+<p>To summarise, when our aesthetic arguments (colour, line type, etc.) appear:</p>
+<ul>
+<li><p><em>within</em> aes(), the argument changes based on the values of the variable</p></li>
+<li><p><em>outside</em> aes(), the argument is given a single value and <em>doesn’t</em> change based on the values of the variable</p></li>
+</ul>
+<p>This ability to “map” <em>within</em> the aesthetic function allows us to <strong>visualise</strong> variations across <strong>multiple variables</strong> simultaneously.</p>
+<p>Notice that as well as assigning different colours to the different Health Boards, ggplot2 was also clever enough to create a legend automatically without us even telling it to do so!</p>
+</section>
+<section id="aesthetics-galore" class="level3">
+<h3 class="anchored" data-anchor-id="aesthetics-galore"><strong>Aesthetics galore!</strong></h3>
+<p>We’ve seen how we can map a variable to color, to distinguish between different categories. Depending on the type of plot we are using, we can also map a variable to many other aesthetic arguments. For example, line thickness, the size of points, the shape of points, and how transparent they are (useful for overplotting in busy graphs). ggplot2 gives you a lot of control over these and you can find out more by searching for aes() in the help tab and clicking on the <strong>ggplot2-specs vignette</strong>, or by <a href="https://cran.r-project.org/web/packages/ggplot2/vignettes/ggplot2-specs.html">clicking here</a>.</p>
+<p>Our plot now has colour but it’s still looking quite crowded so let’s explore how we can improve the presentation further.</p>
+</section>
+</section>
+<section id="additional-elements-facets-and-themes" class="level2">
+<h2 class="anchored" data-anchor-id="additional-elements-facets-and-themes">Additional elements: Facets and themes</h2>
+<section id="faceting" class="level3">
+<h3 class="anchored" data-anchor-id="faceting"><strong>Faceting</strong></h3>
+<p>Faceting provides yet another dimension to our data and allows us to <strong>compare</strong> values <strong>within</strong> a plot and <strong>between</strong> <strong>plots</strong>, making it easier to see what’s going on.</p>
+<p>Let’s take a look at the code for faceting:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>HBName)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The function facet_wrap() takes a formula argument, which just means that we need to remember to use the tilde sign (~) before the variable we’re interested in.</p>
+<p>When we use facet_wrap(), we’re creating separate graphs subset by the specified variable (in this case Health Board). It’s a way of easily splitting up our data into the various levels, in a variable with categories.</p>
+<p>After faceting, we can see that it’s very difficult to see the trends for the smaller Health Boards as all of the axes scales have been aligned. This can be useful when comparing categories but in this dataset, we might be interested in the overall trends across each individual Health Board.</p>
+<p>To change this there is an argument within facet_wrap() which makes our axes “free”! Let’s add that in:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>HBName, <span class="at">scales =</span> <span class="st">"free"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now we can see very similar trends across all Health Boards concerning the recent drop in the total number of operations in 2020 and an increase around 2021.</p>
+</section>
+<section id="themes" class="level3">
+<h3 class="anchored" data-anchor-id="themes"><strong>Themes</strong></h3>
+<p>The default plot theme for ggplot2 has a grey background, but you do not have to be stuck with this, there are endless options for customising your plots, but one way you can do this quickly is by using ggplot2’s <strong>ready-to-go themes</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cancelled <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> TotalOperations)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>HBName, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="topic-4_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In the code above you can see that we have added another line of code, theme_bw()which calls on ggplot2’s black-and-white theme.</p>
+<p>The theme layer controls all of the visual elements which are <em>not</em> directly related to the interpretation of the values in your data. So it doesn’t control the colours of your data points, but it can control the background colour on which your data points lie.</p>
+<p>There are many built-in themes in ggplot2 and you can explore them and discover the ones that you like best.</p>
+<p>The nice thing about the layering structure of ggplot2, is that you can take a default layer, like theme_bw(), and then add your own modifications on top of it, by calling the theme() command, so your plots are entirely customisable.</p>
+<p>You can find out more about the generic theme()command in the help menu of RStudio, where there are endless options for customisation.</p>
+</section>
+</section>
+<section id="geoms-galore" class="level2">
+<h2 class="anchored" data-anchor-id="geoms-galore">Geoms galore!</h2>
+<p>So far in this topic, we’ve explored some of the options we can use in geom_line() the geom used to create line graphs, but there are many more geoms to choose from.</p>
+<p>Here are some of the main ones you’re likely to find useful in your analyses and reporting:</p>
+<p><strong>geom_point()</strong> and <strong>geom_jitter()</strong> are scatter plots and are quite similar. geom_jitter() can be useful when you have over-plotting. It shifts overlapping points to the side slightly, making it easier to see the density in areas of clustering.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><strong>geom_bar()</strong> and <strong>geom_col()</strong> are also very similar but with a few slight differences to do with how data is counted. <em>If you are interested in these counting differences, read on. If not, you can skip the following paragraph.</em></p>
+<p>If you want the height of the bars to represent values in the data, use geom_col(). If rather, you would like the height of the bar to be proportional to the number of cases in each group, use geom_bar(). On a more technical note, this is because geom_bar()uses stat_count() by default meaning it counts the number of cases at each x position, while geom_col() uses stat_indentity() by default meaning it leaves the data as it is.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.3.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><strong>geom_histogram()</strong> is very useful for looking at the distribution of your data, and good for detecting any unusual observations or outliers. A histogram is used to visualise the distraction of a single continuous variable.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.4.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><em>Note: We wouldn’t normally use a histogram to explore time-series data in this way, but we’ve kept the same dataset for consistency.</em></p>
+<p><strong>geom_boxplot()</strong> is another useful plot for seeing how your values are spread out, particularly if you’re comparing a number of variables together or wish to compare between multiple groups.</p>
+<p>Boxplots are a standardized way of showing the distribution of data based on a five-number summary:</p>
+<ol type="1">
+<li><p>minimum</p></li>
+<li><p>first quartile (Q1)</p></li>
+<li><p>median</p></li>
+<li><p>third quartile (Q3)</p></li>
+<li><p>maximum.</p></li>
+</ol>
+<p>The “box” shows where the middle portion of the data is: the interquartile range (IQR).</p>
+<p><img src="images/week3.4.4.boxplot explained.png" class="img-fluid"> <img src="images/week3.4.5.png" class="img-fluid"></p>
+<p>If we would like to add labels or text to our plots, in addition to points and lines, or even to replace points, we can use <strong>geom_label()</strong> and <strong>geom_text()</strong>.</p>
+<section id="an-intentional-omission" class="level4">
+<h4 class="anchored" data-anchor-id="an-intentional-omission"><strong>An intentional omission…</strong></h4>
+<p>You may have noticed that one of the most common, and controversial, types of charts has not yet been discussed: the pie chart.</p>
+<p>While it is possible to make pie charts in R, we will not be learning how to do so in the course. In fact, I hope to convince you that you should not even want to know how to make one! Pie charts are what we can consider bad by definition. A pie chart is a circle (or pie) divided into sections (slices of the pie) that represent a portion of the whole. Nothing offensive there. However, the issue is that humans are not good at reading and distinguishing angles. By definition, they are not human-readable and certainly not a tool to tell a data story.</p>
+<p><a href="https://www.yan-holtz.com/">Yan Holtz</a> has a wonderful, and succinct, post called <a href="https://www.data-to-viz.com/caveat/pie.html">The issue with pie chart</a> that I would recommend reading if you need more evidence.</p>
+</section>
+<section id="selecting-an-appropriate-geometry" class="level4">
+<h4 class="anchored" data-anchor-id="selecting-an-appropriate-geometry"><strong>Selecting an appropriate geometry</strong></h4>
+<p>There are many factors to consider when selecting the geometry or type of plot to make. Most importantly, you need to first consider your data and what options are available to you, reflecting on questions such as:</p>
+<ul>
+<li><p>what data types are my variables of interest (e.g., numeric/continuous, factor/categorical, etc.)?</p></li>
+<li><p>how much, if any, data is missing from my variables of interest?</p></li>
+<li><p>what format is my data in, is it suitable for plotting?</p></li>
+<li><p>what is the goal of the visualisation (e.g., to show change over time, to compare values between groups, to show how data is distributed, to show a part-to-whole composition, etc.)</p></li>
+</ul>
+<p>There is a wonderful web page called From Data to Viz (also by Yan Holtz) which can help you in this decision making process. <a href="https://www.data-to-viz.com/">Data To Viz</a> serves as a comprehensive guide to chart types, organized by the format of the data you have. The web page effectively functions as a decision tree to help guide to showing actionable insights in your data visualisation. What I enjoy the most is that once you have decided on a chart type, there are recommendations and warnings to consider around that chart type as well as links to the <a href="https://r-graph-gallery.com/">R Graph Gallery</a> with R code (largely ggplot2 and its extensions) and an accompanying explanation!</p>
+</section>
+</section>
+<section id="optional-practice" class="level2">
+<h2 class="anchored" data-anchor-id="optional-practice">Optional: Practice 👩‍💻</h2>
+<p>If you are feeling confident, why not see if you can reproduce the following plots?</p>
+<p>Think of the different elements needed to recreate the plots and use the materials in this topic to assist you! If you are struggling to know where to begin in recreating either plot, I would suggest moving on to the Plotting Practice Document in the next topic and then returning to this task.</p>
+<p>The plots below are quite complex, so do share your results on the discussion board if you are able to replicate parts of them! We can then all learn from each other the different ways one could approach the tasks. Feel free to post on the discussion boards if you are having problems reproducing either plot below, or if you have any questions (such as how the plots above were made where the code is not shared)!</p>
+<section id="plot-1" class="level3">
+<h3 class="anchored" data-anchor-id="plot-1"><strong>Plot 1</strong></h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.Practice_Plot_1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><strong>Hint</strong>: You will need to use the dplyr::mutate() function, and some functions from the lubridate package!</p>
+</section>
+<section id="plot-2" class="level3">
+<h3 class="anchored" data-anchor-id="plot-2"><strong>Plot 2</strong></h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/week3.4.Practice_Plot_2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><u><strong>Hint</strong></u>: You will need to use the dplyr::mutate() function, and some functions from the lubridate package! Remember that functions typically have arguments to help you customize different things.</p>
+<p><u><strong>Hint 2</strong></u>: as we have discussed, ggplot2 works in layers, which means you can layer multiple elements on top of each other!</p>
+</section>
+</section>
+<section id="optional-data-visualisation-using-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="optional-data-visualisation-using-ggplot2">Optional: Data visualisation using ggplot2</h2>
+<section id="data-visualisation-in-r-an-introduction-with-ggplot2" class="level3">
+<h3 class="anchored" data-anchor-id="data-visualisation-in-r-an-introduction-with-ggplot2"><strong>Data visualisation in R, an introduction with ggplot2</strong></h3>
+<p>The following video is a recording from a guest lecture by Dr Sam Tyner introducing data visualisation in R using the ggplot2 package.</p>
+<p><a href="https://media.ed.ac.uk/media/1_cdi4lera"><img src="images/optional_topic4.png" class="img-fluid"></a></p>
+<p>Here are Dr Tyner’s <a href="files/Dr_Tyner-slides.pdf">slides</a>.</p>
+<p>The code used to produce the slides is <a href="https://github.com/sctyner/talks/tree/master/Misc/InvitedTalks/edinburgh">available on GitHub</a>.</p>
+<p>On the penultimate slide, <a href="https://twitter.com/sctyner?lang=en">Dr Tyner</a> lists many links for some additional resources, which are copied below for your convenience.</p>
+<ul>
+<li><p><a href="https://ggplot2-book.org/">ggplot2 book</a></p></li>
+<li><p><a href="https://r4ds.had.co.nz/">R for Data science book</a></p></li>
+<li><p><a href="https://github.com/rfordatascience/tidytuesday">Tidy Tuesday</a></p></li>
+<li><p><a href="https://sctyner.me/post/2019-2-17-rhelp/">My advice for getting help in R</a></p></li>
+<li><p>Thomas Lin Pedersen’s (one of the current maintainers of ggplot) ggplot2 webinar: <a href="https://www.youtube.com/watch?v=h29g21z0a68">part 1</a> and <a href="https://www.youtube.com/watch?v=0m4yywqNPVY">part 2</a></p></li>
+<li><p><a href="https://github.com/rstudio/cheatsheets">All RStudio Cheat Sheets</a></p></li>
+<li><p><a href="https://posit.co/resources/videos/the-glamour-of-graphics/">Will Chase’s Design Talk</a></p></li>
+<li><p><a href="https://sctyner.github.io/talks/Conferences/user2020/#1">a 2-hour version of this tutorial</a></p></li>
+</ul>
+<section id="examples-of-extensions" class="level4">
+<h4 class="anchored" data-anchor-id="examples-of-extensions">Examples of Extensions</h4>
+<section id="domain-specific" class="level5">
+<h5 class="anchored" data-anchor-id="domain-specific">Domain Specific</h5>
+<ul>
+<li><p>Networks</p>
+<ul>
+<li><p><a href="https://github.com/sctyner/geomnet">geomnet</a></p></li>
+<li><p><a href="https://github.com/thomasp85/ggraph">ggraph</a></p></li>
+</ul></li>
+<li><p>Time Series</p>
+<ul>
+<li><p><a href="http://corybrunson.github.io/ggalluvial/">ggaluvial</a></p></li>
+<li><p><a href="https://pkg.earo.me/sugrrants/">sugrrants</a></p></li>
+</ul></li>
+<li><p>Sciences</p>
+<ul>
+<li><p><a href="https://wilkox.org/gggenes">ggenes</a></p></li>
+<li><p><a href="https://guangchuangyu.github.io/software/ggtree">ggtree</a></p></li>
+<li><p><a href="https://github.com/omarwagih/ggseqlogo">ggseqlogo</a></p></li>
+<li><p><a href="https://docs.r4photobiology.info/ggspectra">ggspectra</a></p></li>
+</ul></li>
+</ul>
+</section>
+<section id="appearance-customisation" class="level5">
+<h5 class="anchored" data-anchor-id="appearance-customisation">Appearance customisation</h5>
+<ul>
+<li><p>Arrange ggplots</p>
+<ul>
+<li><a href="https://wilkelab.org/cowplot">cowplot</a></li>
+<li><a href="https://patchwork.data-imaginist.com/">patchwork</a></li>
+<li><a href="https://gganimate.com/">gganimate</a></li>
+</ul></li>
+<li><p>Custom themes and/or scales</p>
+<ul>
+<li><p><a href="https://jrnold.github.io/ggthemes">ggthemes</a></p></li>
+<li><p><a href="https://nanx.me/ggsci">ggsci</a></p></li>
+<li><p><a href="https://github.com/ricardo-bion/ggtech">ggtech</a></p></li>
+<li><p><a href="https://github.com/cttobin/ggthemr">ggthemr</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/xkcd/index.html">xkcd</a></p></li>
+<li><p><a href="https://github.com/kassambara/ggpubr/issues">ggpubr</a></p></li>
+</ul></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+<section id="optional-creating-a-line-graph-in-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="optional-creating-a-line-graph-in-ggplot2">Optional: Creating a line graph in ggplot2</h2>
+<p><strong>Data Visualisation Demonstration in R</strong></p>
+<p>In the video below, Dr Holly Tibble, Chancellor’s Fellow in Medical Informatics at the University of Edinburgh will demonstrate how to plan, create, and describe a simple visualisation in R for asthma deaths in the UK throughout the year, between 2011 and 2012.</p>
+<p><a href="https://media.ed.ac.uk/media/1_nnumebbf"><img src="images/optional_topic4_2.png" class="img-fluid"></a></p>
+<p>Here is the <a href="files/Data_visualisation_and_storytelling_subtopic_plots.R">R script</a> and the <a href="files/Data_visualisation_demonstration_transcript.pdf">transcript of the presentation</a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ddi-talent\.github\.io\/website-ug-data-science\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
