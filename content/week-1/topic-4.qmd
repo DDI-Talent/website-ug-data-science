@@ -1,36 +1,59 @@
 ---
-title: "Types of Health Data"
+title: "Health Data Formats"
 format: html
 ---
 
-When we are interacting with data sources for our analysis, we need to be aware of the different types of data that we may encounter.
+Health data is extremely varied and many different formats have been developed to store and share it.
+When we are interacting with data sources for our analysis, we need to be aware of some of the different formats of data that we may encounter, and when they might be most appropriate, e.g. for storage vs sharing.
 
 We will mainly be using CSV files in this course but it's useful to know about other formats that you may come across.
 
-The following are some examples of the common types of data along with some code snippets illustrating how you would use them. You don't need to remember all of these snippets but you will certainly come across them one day!
+Following, are some examples of common data formats along with some code snippets illustrating how you would use them.
+You don't need to remember all (or any!) of these snippets but you will certainly come across, and even write yourself, similar snippets one day!
 
-## CSV (Comma Separated Values)
+It is also worth noting that many data formats can be converted to other formats.
+So even if you encounter a format you are unfamiliar with, it is often one of the first things a data scientist will try to do is convert it to a format they are more familiar with.
 
-CSV files are the most common format for storing tabular data, particularly in this course. They are simple text files that use commas to separate values. Each line in the file represents a row of data, and each value in the row is separated by a comma. CSV files can be easily imported into RStudio using the `read_csv` function in the `readr` package (also included in Tidyverse package which we will cover later).
+## Delimited files
 
-The examples below use code that you may not be familiar with. Don't worry! You will soon be using very similar code.
+Delimited files are simple text files where data is organized in rows and columns, with a special character separating each value, called the __delimiter__.
+They are the most common format for storing tabular data and are particularly useful because they can be opened in any text editor and easily shared between different software programs.
 
-#### Example
+Their biggest advantages are that they are simple, and human readable.
+So simple they can be opened anywhere, even just with Notepad on Windows, and even just eye-balling the data you can often tell what it is about.
 
-``` r
-library(readr)
-data <- read_csv("data.csv")
+In theory, any character can be used as a delimiter, but the most common ones are commas (CSV files) and tabs (TSV files), and in the wild, you may also come across semicolon or pipe `|` delimited files.
+
+### CSV (Comma Separated Values)
+
+CSV files use commas to separate values and are by far the most common delimited format.
+Each line represents one row of data, and commas separate the different columns.
+For example, patient data might look like this
+
+```
+patient_id,name,age,diagnosis
+001,John Smith,45,Diabetes
+002,Sarah Jones,32,Hypertension
 ```
 
-## TSV (Tab Separated Values)
+### TSV (Tab Separated Values)
 
-Similar to CSV files, TSV files use tabs to separate values instead of commas. They are also simple text files that can be easily imported into RStudio using the `read_tsv` function in the `readr` package.
+It is possible to include commas in values in a CSV file, but you have to make sure the values are quoted.
+If you have a lot of such values, it might be worth considering a different delimiter, such as tabs.
+TSV files work exactly like CSV files but use tab characters instead of commas to separate values.
 
-#### Example
+### Example
 
 ``` r
 library(readr)
-data <- read_tsv("data.tsv")
+# Read CSV file
+csv_data <- read_csv("patient_data.csv")
+
+# Read TSV file  
+tsv_data <- read_tsv("lab_results.tsv")
+
+# More generally, you can use a function that allows you to specify the delimiter
+delimited_data <- read_delim("data.txt", delim = ";")
 ```
 
 ## JSON (JavaScript Object Notation)
@@ -49,7 +72,9 @@ data <- fromJSON("example-json-data.json")
 ::: {.callout-tip icon="false" collapse="true"}
 ## JSON example (click to view)
 
-JSON (JavaScript Object Notation) is a lightweight, text-based format used to store and semi-structured data between systems. It is especially common in web applications, but is not limited to the Javascript language. It uses a key-value pair structure, which makes it fairly human friendly easy machines to parse.
+JSON (JavaScript Object Notation) is a lightweight, text-based format used to store and semi-structured data between systems.
+It is especially common in web applications, but is not limited to the Javascript language.
+It uses a key-value pair structure, which makes it fairly human friendly easy machines to parse.
 
 The example here shows the key-value structure, and also the element can be (sometime very deeply) nested. The coloured boxes show the value for one key can be a list of values, or even a nested list (see first box).
 
@@ -58,18 +83,49 @@ The example here shows the key-value structure, and also the element can be (som
 </iframe>
 :::
 
+
 ## Databases
 
-Databases are structured collections of data that can be accessed and managed using a database management system (DBMS). There are many types of databases, including relational databases (e.g., MySQL, PostgreSQL) and NoSQL databases (e.g., MongoDB, Cassandra).
+The data formats probably most familiar to us are files like CSV or xlsx.
+These are simple, flat files where all the data is stored in one table.
+Databases (often abbreviated to DB) are organized collections of data, usually tables, that are stored in a way that makes them much more efficient than these simple flat files.
+In addition, part of the database structure includes ways to link tables together (@fig-db-erd).
+In particular, some columns are intended to be unique identifiers (called __primary keys__) and can be __indexed__ to make searching much faster.
+
+!["Entity Relationship Diagram" (ERD) showing the structure of a healthcare database with four main tables: patients, visits, wards, and staff, connected by primary and foreign key relationships, froma fictional hosplital in Wales (`_wal`).](content/week-1/images/week01-topic04_db-erd.png){#fig-db-erd alt-text='Entity Relationship Diagram showing four database tables: patient_wal (containing patient_id, first_name, last_name, DoB, sex), visit_wal (containing visit_id, patient_id, ward_id, staff_id, admission_date, injury, discharge_reason), ward_wal (containing ward_id, city, number_of_bed), and staff_wal (containing staff_id, first_name, last_name, role). The diagram shows primary keys marked with key icons and foreign key relationships connecting the tables with lines.'}
+
+Ever noticed that it can takes a long weekend to search your local computer for a file, but a Google search can return millions of results in a fraction of a second?
+That's indexing.
+Now consider applying that sort of efficiency to a hospital's patient records.
+
+For example, in a hospital database, patient information might be in one table, and their appointments in another table.
+The appointment table would link to the patient table using a patient ID number, rather than duplicating all the patient details for each appointment.
+
+### Semi-structured data
+
+But what about the JSON example above?
+Those data came from a FHIR (Fast Healthcare Interoperability Resource) server.
+FHIR data is also stored in databases, which illustrates that databases can also store semi-structured data (like JSON), or even unstructured data, such as the JSON responses from FHIR servers shown above.
+
+This means a single database could contain both traditional patient records in tables and complex JSON documents with detailed clinical information, and images.
 
 ### Example
 
-``` r
-library(DBI)
-library(RSQLite)
-con <- dbConnect(RSQLite::SQLite(), "database.db")
-data <- dbGetQuery(con, "SELECT * FROM table_name")
-dbDisconnect(con)
+Data stored in a DB is typically queried using a language called SQL (Structured Query Language).
+In this example, we select patients and their visits with ward information.
+There is no need to understand this code, __but try anyway__.
+You might find it actually makes some sense.
+SQL was designed to be human-readable, and actually closely resembles the tidyverse functions you are already (or soon will be) familiar with.
+
+```sql
+SELECT p.first_name, p.last_name, p.DoB,
+       v.admission_date, v.injury, v.discharge_reason,
+       w.city, w.number_of_bed
+FROM patient_wal p
+LEFT JOIN visit_wal v ON p.patient_id = v.patient_id
+LEFT JOIN ward_wal w ON v.ward_id = w.ward_id
+WHERE v.admission_date >= '2024-01-01' AND p.sex = 'F'
+ORDER BY v.admission_date DESC;
 ```
 
 ## What types of data are used in health research?
