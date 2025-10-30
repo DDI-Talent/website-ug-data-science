@@ -3,6 +3,15 @@ title: "Topic 4: Plotting data with ggplot2"
 format: html
 ---
 
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  eval = TRUE)
+```
+
 ## The ggplot2 package
 
 Plotting in R is great because your code will always be there for you to check and reproduce what you did, and even better than that, you've already seen that you can start creating nice-looking plots straight away with just a few lines of code.
@@ -27,7 +36,7 @@ You'll spend a lot of time copying previous code you've written, copying code yo
 
 **Copy and paste** the following code into your R Script or into a code chunk in your RMarkdown file.
 
-```{r warning=FALSE, message=FALSE}
+```{r warning=FALSE, message=FALSE, eval=TRUE}
 # Load packages 
 library(tidyverse)
 # library(lubridate)
@@ -68,7 +77,7 @@ Here we are using the year() function from `lubridate` to extract only the year 
 
 You should see the following output
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
    distinct(year(Month))
 ```
@@ -77,7 +86,7 @@ We can use a similar bit of code to look at the Health Boards:
 
 From which you should see the following output
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
    distinct(HBName)
 ```
@@ -120,7 +129,7 @@ Some of the non-essential elements include:
 
 Let's start with the plotting function ggplot() which lets R know we are about to create a plot. And we'll specify which variables we want to display on the x and y axes. Copy and paste the following code below the last bit of code in your script:
 
-```{r}
+```{r eval=TRUE}
  cancelled %>%
    ggplot(aes(x = Month, y = TotalOperations))
 
@@ -144,7 +153,7 @@ To add a layer in ggplot2, we have to make sure to add a + sign at the end of ea
 
 Let's add a geom, and since we're looking at changes over time, let's add a geom to create a line graph, geom_line():
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
    ggplot(aes(x = Month, y = TotalOperations)) +
     geom_line()
@@ -152,7 +161,7 @@ cancelled %>%
 
 Now we have a complete plot, with only 3 short lines of code! But, our lines don't look right. That's because for each date in our dataset, we have observations or values for 14 different Health Boards, and ggplot2 joins the points for all of these Health Board values first before moving on to the next date and so forth. To correct this, all we need to do is add a group mapping within our aes() function. This lets R know that each category within the specified group gets its own line:
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
   ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
   geom_line()
@@ -166,7 +175,7 @@ There are various geoms that we can use, and we'll cover these in more detail la
 
 The aesthetics is where all the cool stuff happens in ggplot2. This is where the values in our columns (our variables) are converted into visual scales, be that x- or y-axis scales, or colour or size scales. The aes() function allows us to access and visualise large amounts of information **quickly** and **efficiently**.
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
   ggplot(aes(x = Month, y = TotalOperations, group = HBName)) +
   geom_line(color = "darkgreen")
@@ -188,7 +197,7 @@ If we wanted our data points to have a different shape or colour, *depending* on
 
 At the moment, our plot is very busy, it's hard to distinguish between the different Health Boards and it would be useful to make them more visible by assigning each a different colour, so let's add colour = HBName *within* our aesthetic mapping:
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
   ggplot(aes(x = Month, y = TotalOperations, colour = HBName)) +
   geom_line()
@@ -220,7 +229,7 @@ Faceting provides yet another dimension to our data and allows us to **compare**
 
 Let's take a look at the code for faceting:
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
   ggplot(aes(x = Month, y = TotalOperations)) +
   geom_line(colour = "darkgreen") +
@@ -235,7 +244,7 @@ After faceting, we can see that it's very difficult to see the trends for the sm
 
 To change this there is an argument within facet_wrap() which makes our axes "free"! Let's add that in:
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
   ggplot(aes(x = Month, y = TotalOperations)) +
   geom_line(colour = "darkgreen") +
@@ -248,7 +257,7 @@ Now we can see very similar trends across all Health Boards concerning the recen
 
 The default plot theme for ggplot2 has a grey background, but you do not have to be stuck with this, there are endless options for customising your plots, but one way you can do this quickly is by using ggplot2's **ready-to-go themes**.
 
-```{r}
+```{r eval=TRUE}
 cancelled %>%
   ggplot(aes(x = Month, y = TotalOperations)) +
   geom_line(colour = "darkgreen") +
